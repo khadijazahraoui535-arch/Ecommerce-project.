@@ -1,967 +1,1289 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VictoryLand — Univers de Jeux</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #0a0a0f;
-    --bg2: #12121a;
-    --bg3: #1a1a26;
-    --accent: #7c5cfc;
-    --accent2: #fc5c7d;
-    --accent3: #5cf0b4;
-    --gold: #f5c542;
-    --text: #e8e8f0;
-    --text2: #8888aa;
-    --border: rgba(124,92,252,0.2);
-    --card: rgba(255,255,255,0.04);
-    --card-hover: rgba(255,255,255,0.08);
-    --glow: 0 0 30px rgba(124,92,252,0.3);
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* PAGES */
-  .page { display: none; min-height: 100vh; }
-  .page.active { display: block; }
-
-  /* NAV */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 1rem 2.5rem;
-    background: rgba(10,10,15,0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .nav-logo {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.6rem; font-weight: 800;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    cursor: pointer; letter-spacing: -0.02em;
-  }
-
-  .nav-links { display: flex; gap: 0.25rem; }
-
-  .nav-link {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.85rem; font-weight: 500;
-    padding: 0.5rem 1rem;
-    border-radius: 999px;
-    border: none; background: transparent;
-    color: var(--text2); cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 0.01em;
-  }
-
-  .nav-link:hover { color: var(--text); background: var(--card); }
-  .nav-link.active { color: var(--accent); background: rgba(124,92,252,0.12); }
-
-  .nav-right { display: flex; align-items: center; gap: 1rem; }
-
-  .coins-badge {
-    display: flex; align-items: center; gap: 0.4rem;
-    background: rgba(245,197,66,0.1);
-    border: 1px solid rgba(245,197,66,0.25);
-    padding: 0.35rem 0.8rem;
-    border-radius: 999px;
-    font-size: 0.85rem; font-weight: 500;
-    color: var(--gold);
-  }
-
-  .coin-dot { width: 10px; height: 10px; background: var(--gold); border-radius: 50%; }
-
-  .avatar {
-    width: 36px; height: 36px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.8rem; font-weight: 700; cursor: pointer;
-    border: 2px solid transparent;
-    transition: border-color 0.2s;
-  }
-  .avatar:hover { border-color: var(--accent); }
-
-  /* ===================== PAGE ACCUEIL ===================== */
-  .hero {
-    min-height: 100vh;
-    display: flex; flex-direction: column; justify-content: center;
-    padding: 8rem 2.5rem 4rem;
-    position: relative; overflow: hidden;
-  }
-
-  .hero-bg {
-    position: absolute; inset: 0;
-    background:
-      radial-gradient(ellipse 60% 50% at 70% 40%, rgba(124,92,252,0.12) 0%, transparent 70%),
-      radial-gradient(ellipse 40% 40% at 20% 70%, rgba(252,92,125,0.08) 0%, transparent 60%);
-    pointer-events: none;
-  }
-
-  .hero-tag {
-    display: inline-flex; align-items: center; gap: 0.5rem;
-    font-size: 0.75rem; font-weight: 500; letter-spacing: 0.12em;
-    text-transform: uppercase; color: var(--accent);
-    background: rgba(124,92,252,0.1);
-    border: 1px solid rgba(124,92,252,0.3);
-    padding: 0.4rem 1rem; border-radius: 999px;
-    width: fit-content; margin-bottom: 1.5rem;
-    animation: fadeUp 0.6s ease both;
-  }
-
-  .tag-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent3); animation: pulse 2s infinite; }
-
-  @keyframes pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.5; transform:scale(1.4); } }
-  @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
-  @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
-  @keyframes spin { to { transform:rotate(360deg); } }
-  @keyframes float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-8px); } }
-
-  .hero-title {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(2.8rem, 6vw, 5.5rem);
-    font-weight: 800; line-height: 1.05;
-    letter-spacing: -0.04em;
-    margin-bottom: 1.5rem;
-    animation: fadeUp 0.6s 0.1s ease both;
-    max-width: 700px;
-  }
-
-  .gradient-word {
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  }
-
-  .hero-sub {
-    font-size: 1.1rem; color: var(--text2); line-height: 1.7;
-    max-width: 480px; margin-bottom: 2.5rem;
-    animation: fadeUp 0.6s 0.2s ease both;
-  }
-
-  .hero-cta { display: flex; gap: 1rem; animation: fadeUp 0.6s 0.3s ease both; flex-wrap: wrap; }
-
-  .btn-primary {
-    background: linear-gradient(135deg, var(--accent), #6040e0);
-    color: #fff; border: none; padding: 0.85rem 2rem;
-    border-radius: 12px; font-family: 'DM Sans', sans-serif;
-    font-size: 0.95rem; font-weight: 500;
-    cursor: pointer; transition: all 0.2s;
-    box-shadow: 0 8px 32px rgba(124,92,252,0.35);
-    letter-spacing: 0.01em;
-  }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(124,92,252,0.5); }
-
-  .btn-secondary {
-    background: var(--card); color: var(--text);
-    border: 1px solid var(--border); padding: 0.85rem 2rem;
-    border-radius: 12px; font-family: 'DM Sans', sans-serif;
-    font-size: 0.95rem; font-weight: 500;
-    cursor: pointer; transition: all 0.2s;
-  }
-  .btn-secondary:hover { background: var(--card-hover); border-color: rgba(124,92,252,0.4); }
-
-  .hero-stats {
-    display: flex; gap: 3rem; margin-top: 4rem;
-    animation: fadeUp 0.6s 0.4s ease both;
-  }
-
-  .stat-item { }
-  .stat-val {
-    font-family: 'Syne', sans-serif;
-    font-size: 2rem; font-weight: 800; color: var(--text);
-    letter-spacing: -0.03em;
-  }
-  .stat-label { font-size: 0.8rem; color: var(--text2); margin-top: 0.2rem; text-transform: uppercase; letter-spacing: 0.08em; }
-
-  .hero-cards {
-    position: absolute; right: 5%; top: 50%; transform: translateY(-50%);
-    display: flex; flex-direction: column; gap: 1rem;
-    animation: float 4s ease-in-out infinite;
-  }
-
-  .floating-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 1.2rem 1.5rem;
-    width: 260px;
-    backdrop-filter: blur(8px);
-  }
-
-  .fc-top { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
-  .fc-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
-  .fc-icon.purple { background: rgba(124,92,252,0.2); }
-  .fc-icon.pink { background: rgba(252,92,125,0.2); }
-  .fc-name { font-weight: 500; font-size: 0.9rem; }
-  .fc-genre { font-size: 0.75rem; color: var(--text2); }
-  .fc-bar { height: 5px; background: rgba(255,255,255,0.07); border-radius: 999px; overflow: hidden; }
-  .fc-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--accent2)); }
-
-  /* Featured Section */
-  .section { padding: 5rem 2.5rem; }
-  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
-  .section-title { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 700; }
-  .section-link { font-size: 0.85rem; color: var(--accent); cursor: pointer; transition: opacity 0.2s; }
-  .section-link:hover { opacity: 0.7; }
-
-  .game-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.25rem; }
-
-  .game-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 16px; overflow: hidden;
-    cursor: pointer; transition: all 0.25s;
-    position: relative;
-  }
-  .game-card:hover { transform: translateY(-4px); border-color: rgba(124,92,252,0.4); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
-
-  .game-thumb {
-    height: 150px; display: flex; align-items: center; justify-content: center;
-    font-size: 3.5rem;
-    position: relative; overflow: hidden;
-  }
-  .thumb-bg { position: absolute; inset: 0; opacity: 0.4; }
-
-  .game-info { padding: 1rem; }
-  .game-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 0.35rem; }
-  .game-meta { display: flex; align-items: center; justify-content: space-between; }
-  .game-genre { font-size: 0.75rem; color: var(--text2); background: var(--bg3); padding: 0.2rem 0.6rem; border-radius: 999px; }
-  .game-stars { font-size: 0.8rem; color: var(--gold); }
-
-  .badge-new {
-    position: absolute; top: 10px; right: 10px;
-    background: var(--accent); color: #fff;
-    font-size: 0.65rem; font-weight: 700;
-    padding: 0.2rem 0.5rem; border-radius: 999px;
-    letter-spacing: 0.05em; text-transform: uppercase;
-  }
-
-  /* ===================== PAGE JEUX ===================== */
-  .page-hero {
-    padding: 8rem 2.5rem 3rem;
-    background: linear-gradient(180deg, rgba(124,92,252,0.06) 0%, transparent 100%);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .page-hero-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 2.5rem; font-weight: 800;
-    letter-spacing: -0.04em;
-    margin-bottom: 0.5rem;
-  }
-  .page-hero-sub { color: var(--text2); font-size: 0.95rem; }
-
-  .filters {
-    display: flex; gap: 0.5rem; flex-wrap: wrap;
-    padding: 1.5rem 2.5rem; border-bottom: 1px solid var(--border);
-  }
-
-  .filter-btn {
-    padding: 0.45rem 1rem; border-radius: 999px;
-    border: 1px solid var(--border); background: transparent;
-    color: var(--text2); font-family: 'DM Sans', sans-serif;
-    font-size: 0.82rem; font-weight: 500;
-    cursor: pointer; transition: all 0.2s;
-  }
-  .filter-btn:hover { color: var(--text); border-color: rgba(124,92,252,0.4); }
-  .filter-btn.active { background: rgba(124,92,252,0.15); border-color: var(--accent); color: var(--accent); }
-
-  .games-grid {
-    padding: 2rem 2.5rem;
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.25rem;
-  }
-
-  .game-card-lg {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: 16px; overflow: hidden;
-    cursor: pointer; transition: all 0.25s;
-    animation: fadeIn 0.4s ease both;
-  }
-  .game-card-lg:hover { transform: translateY(-4px); border-color: rgba(124,92,252,0.5); box-shadow: 0 16px 48px rgba(0,0,0,0.5); }
-
-  .gcl-thumb { height: 130px; display: flex; align-items: center; justify-content: center; font-size: 3rem; position: relative; overflow:hidden; }
-  .gcl-info { padding: 1rem; }
-  .gcl-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.95rem; margin-bottom: 0.4rem; }
-  .gcl-row { display: flex; align-items: center; justify-content: space-between; }
-  .gcl-genre { font-size: 0.72rem; color: var(--text2); background: var(--bg3); padding: 0.18rem 0.55rem; border-radius: 999px; }
-  .gcl-players { font-size: 0.72rem; color: var(--accent3); }
-  .gcl-bar { height: 4px; background: rgba(255,255,255,0.06); border-radius: 999px; margin-top: 0.75rem; overflow: hidden; }
-  .gcl-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--accent2)); }
-
-  /* ===================== PAGE CLASSEMENT ===================== */
-  .leaderboard { padding: 8rem 2.5rem 4rem; }
-  .lb-header { margin-bottom: 2rem; }
-  .lb-title { font-family: 'Syne', sans-serif; font-size: 2.5rem; font-weight: 800; letter-spacing: -0.04em; margin-bottom: 0.4rem; }
-  .lb-sub { color: var(--text2); }
-
-  .lb-tabs { display: flex; gap: 0.5rem; margin-bottom: 2rem; }
-  .lb-tab {
-    padding: 0.5rem 1.2rem; border-radius: 999px;
-    border: 1px solid var(--border); background: transparent;
-    color: var(--text2); font-family: 'DM Sans', sans-serif;
-    font-size: 0.85rem; cursor: pointer; transition: all 0.2s;
-  }
-  .lb-tab:hover { color: var(--text); }
-  .lb-tab.active { background: rgba(124,92,252,0.15); border-color: var(--accent); color: var(--accent); }
-
-  .lb-list { display: flex; flex-direction: column; gap: 0.75rem; max-width: 720px; }
-
-  .lb-item {
-    display: flex; align-items: center; gap: 1.25rem;
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: 14px; padding: 1rem 1.25rem;
-    transition: all 0.2s; cursor: pointer;
-  }
-  .lb-item:hover { border-color: rgba(124,92,252,0.3); background: var(--bg3); }
-  .lb-item.top1 { border-color: rgba(245,197,66,0.4); background: rgba(245,197,66,0.05); }
-  .lb-item.top2 { border-color: rgba(192,192,192,0.3); background: rgba(192,192,192,0.04); }
-  .lb-item.top3 { border-color: rgba(205,127,50,0.3); background: rgba(205,127,50,0.04); }
-
-  .lb-rank { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800; min-width: 36px; text-align: center; }
-  .lb-rank.r1 { color: var(--gold); }
-  .lb-rank.r2 { color: #C0C0C0; }
-  .lb-rank.r3 { color: #CD7F32; }
-
-  .lb-avatar {
-    width: 44px; height: 44px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1rem; font-weight: 700;
-  }
-
-  .lb-info { flex: 1; }
-  .lb-name { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.2rem; }
-  .lb-game { font-size: 0.77rem; color: var(--text2); }
-
-  .lb-score { text-align: right; }
-  .lb-pts { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 800; color: var(--accent); }
-  .lb-level { font-size: 0.75rem; color: var(--text2); margin-top: 0.15rem; }
-
-  /* ===================== PAGE BOUTIQUE ===================== */
-  .shop { padding: 8rem 2.5rem 4rem; }
-  .shop-header { margin-bottom: 2rem; }
-  .shop-title { font-family: 'Syne', sans-serif; font-size: 2.5rem; font-weight: 800; letter-spacing: -0.04em; margin-bottom: 0.4rem; }
-  .shop-sub { color: var(--text2); }
-
-  .shop-balance {
-    display: inline-flex; align-items: center; gap: 0.75rem;
-    background: rgba(245,197,66,0.08); border: 1px solid rgba(245,197,66,0.25);
-    border-radius: 14px; padding: 0.85rem 1.5rem; margin-bottom: 2.5rem;
-  }
-  .balance-label { font-size: 0.8rem; color: var(--text2); text-transform: uppercase; letter-spacing: 0.08em; }
-  .balance-val { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; color: var(--gold); }
-  .balance-icon { font-size: 1.5rem; }
-
-  .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.25rem; }
-
-  .shop-item {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: 16px; overflow: hidden;
-    transition: all 0.25s; cursor: pointer;
-  }
-  .shop-item:hover { transform: translateY(-4px); border-color: rgba(124,92,252,0.4); box-shadow: 0 16px 48px rgba(0,0,0,0.4); }
-
-  .si-thumb { height: 140px; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; position: relative; }
-  .si-info { padding: 1.1rem; }
-  .si-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 0.3rem; }
-  .si-desc { font-size: 0.78rem; color: var(--text2); line-height: 1.5; margin-bottom: 1rem; }
-  .si-row { display: flex; align-items: center; justify-content: space-between; }
-  .si-price { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; color: var(--gold); display: flex; align-items: center; gap: 0.3rem; }
-
-  .buy-btn {
-    background: linear-gradient(135deg, var(--accent), #6040e0);
-    color: #fff; border: none; padding: 0.45rem 1rem;
-    border-radius: 8px; font-size: 0.8rem; font-weight: 500;
-    cursor: pointer; transition: all 0.2s;
-    font-family: 'DM Sans', sans-serif;
-  }
-  .buy-btn:hover { transform: scale(1.05); }
-  .buy-btn:disabled { opacity: 0.4; cursor: default; }
-  .buy-btn.owned { background: var(--accent3); color: #000; }
-
-  .si-rarity {
-    position: absolute; top: 10px; left: 10px;
-    font-size: 0.65rem; font-weight: 700; padding: 0.2rem 0.55rem;
-    border-radius: 999px; text-transform: uppercase; letter-spacing: 0.05em;
-  }
-  .rarity-epic { background: rgba(124,92,252,0.3); color: var(--accent); border: 1px solid rgba(124,92,252,0.5); }
-  .rarity-rare { background: rgba(92,240,180,0.2); color: var(--accent3); border: 1px solid rgba(92,240,180,0.4); }
-  .rarity-common { background: rgba(136,136,170,0.2); color: var(--text2); border: 1px solid rgba(136,136,170,0.3); }
-
-  /* ===================== PAGE PROFIL ===================== */
-  .profil { padding: 8rem 2.5rem 4rem; }
-
-  .profil-top {
-    display: flex; align-items: center; gap: 2rem;
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: 20px; padding: 2rem;
-    margin-bottom: 2rem;
-    position: relative; overflow: hidden;
-  }
-  .profil-top::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
-    background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
-  }
-
-  .profil-avatar {
-    width: 80px; height: 80px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    display: flex; align-items: center; justify-content: center;
-    font-size: 2rem; font-weight: 800;
-    flex-shrink: 0;
-    box-shadow: 0 0 0 4px rgba(124,92,252,0.2);
-  }
-
-  .profil-info { flex: 1; }
-  .profil-name { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; margin-bottom: 0.25rem; }
-  .profil-handle { color: var(--text2); font-size: 0.9rem; margin-bottom: 0.75rem; }
-  .profil-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-  .p-badge {
-    font-size: 0.72rem; font-weight: 600; padding: 0.2rem 0.6rem;
-    border-radius: 999px; text-transform: uppercase; letter-spacing: 0.05em;
-  }
-  .pb-purple { background: rgba(124,92,252,0.2); color: var(--accent); border: 1px solid rgba(124,92,252,0.4); }
-  .pb-green { background: rgba(92,240,180,0.15); color: var(--accent3); border: 1px solid rgba(92,240,180,0.3); }
-  .pb-gold { background: rgba(245,197,66,0.15); color: var(--gold); border: 1px solid rgba(245,197,66,0.3); }
-
-  .profil-stats { display: flex; gap: 1.5rem; }
-  .ps-item { text-align: center; }
-  .ps-val { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; }
-  .ps-key { font-size: 0.72rem; color: var(--text2); text-transform: uppercase; letter-spacing: 0.07em; margin-top: 0.15rem; }
-
-  .profil-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
-
-  .p-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; }
-  .p-card-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; }
-  .p-card-icon { font-size: 1rem; }
-
-  .activity-list { display: flex; flex-direction: column; gap: 0.75rem; }
-  .activity-item { display: flex; align-items: center; gap: 0.75rem; }
-  .act-icon { width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; flex-shrink: 0; }
-  .act-icon.purple { background: rgba(124,92,252,0.15); }
-  .act-icon.pink { background: rgba(252,92,125,0.15); }
-  .act-icon.green { background: rgba(92,240,180,0.12); }
-  .act-desc { flex: 1; font-size: 0.83rem; }
-  .act-time { font-size: 0.72rem; color: var(--text2); }
-
-  .skills-list { display: flex; flex-direction: column; gap: 1rem; }
-  .skill-item { }
-  .skill-header { display: flex; justify-content: space-between; font-size: 0.83rem; margin-bottom: 0.4rem; }
-  .skill-pct { color: var(--accent); font-weight: 600; }
-  .skill-bar { height: 6px; background: rgba(255,255,255,0.07); border-radius: 999px; overflow: hidden; }
-  .skill-fill { height: 100%; border-radius: 999px; }
-  .sf-purple { background: linear-gradient(90deg, var(--accent), #a080ff); }
-  .sf-pink { background: linear-gradient(90deg, var(--accent2), #ff80a0); }
-  .sf-green { background: linear-gradient(90deg, var(--accent3), #40e090); }
-  .sf-gold { background: linear-gradient(90deg, var(--gold), #ffd080); }
-
-  /* GAME MODAL */
-  .modal-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.75);
-    backdrop-filter: blur(6px); z-index: 200;
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none; transition: opacity 0.25s;
-  }
-  .modal-overlay.open { opacity: 1; pointer-events: all; }
-
-  .modal {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: 24px; padding: 2rem; width: 90%; max-width: 480px;
-    transform: translateY(20px); transition: transform 0.25s;
-    position: relative;
-  }
-  .modal-overlay.open .modal { transform: translateY(0); }
-
-  .modal-close {
-    position: absolute; top: 1rem; right: 1rem;
-    background: var(--card); border: none; color: var(--text2);
-    width: 32px; height: 32px; border-radius: 50%;
-    cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s;
-  }
-  .modal-close:hover { background: var(--card-hover); color: var(--text); }
-
-  .modal-thumb { font-size: 5rem; text-align: center; margin-bottom: 1rem; }
-  .modal-name { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem; }
-  .modal-desc { color: var(--text2); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.5rem; }
-  .modal-play {
-    width: 100%; background: linear-gradient(135deg, var(--accent), #6040e0);
-    color: #fff; border: none; padding: 1rem;
-    border-radius: 12px; font-size: 1rem; font-weight: 600;
-    cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif;
-  }
-  .modal-play:hover { transform: scale(1.02); box-shadow: 0 8px 32px rgba(124,92,252,0.4); }
-
-  /* NOTIF */
-  .notif {
-    position: fixed; bottom: 2rem; right: 2rem; z-index: 300;
-    background: var(--bg2); border: 1px solid var(--accent);
-    border-radius: 12px; padding: 1rem 1.5rem;
-    display: flex; align-items: center; gap: 0.75rem;
-    transform: translateY(100px); opacity: 0;
-    transition: all 0.35s; pointer-events: none;
-    box-shadow: var(--glow);
-  }
-  .notif.show { transform: translateY(0); opacity: 1; }
-  .notif-icon { font-size: 1.2rem; }
-  .notif-text { font-size: 0.9rem; font-weight: 500; }
-
-  /* PROGRESS BAR NAV */
-  .progress-bar {
-    position: fixed; top: 0; left: 0; height: 2px; z-index: 200;
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-    transition: width 0.3s ease; width: 0%;
-  }
-
-  @media (max-width: 768px) {
-    .hero-cards { display: none; }
-    .profil-grid { grid-template-columns: 1fr; }
-    nav { padding: 1rem 1.25rem; }
-    .nav-links { display: none; }
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Antiqua — Trésors</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --cream:  #f5f0e8;
+      --paper:  #ede6d3;
+      --ink:    #1a1208;
+      --sepia:  #7a5c34;
+      --gold:   #c9993a;
+      --rust:   #9e4423;
+      --moss:   #4a5e3a;
+      --shadow: rgba(26,18,8,.18);
+      --ff-display: 'Playfair Display', serif;
+      --ff-body:    'Cormorant Garamond', serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: var(--ff-body);
+      font-size: 1.1rem;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+    ul { list-style: none; }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+      opacity: .5;
+    }
+    body > * { position: relative; z-index: 1; }
+
+    .navbar {
+      position: sticky; top: 0; z-index: 999;
+      background: var(--ink);
+      padding: .9rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      box-shadow: 0 2px 12px var(--shadow);
+    }
+    .nav-logo {
+      font-family: var(--ff-display);
+      font-size: 1.6rem; color: var(--gold);
+      letter-spacing: .04em;
+    }
+    .nav-logo span { font-style: italic; color: var(--cream); }
+    .nav-links { display: flex; gap: 2rem; }
+    .nav-links a {
+      color: var(--paper);
+      font-size: .95rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      position: relative;
+      padding-bottom: 2px;
+      transition: color .25s;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; width: 0; height: 1px;
+      background: var(--gold); transition: width .3s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-toggle { display: none; cursor: pointer; flex-direction: column; gap: 5px; }
+    .nav-toggle span { width: 24px; height: 2px; background: var(--paper); display: block; transition: .3s; }
+
+    .page { display: none; animation: fadeIn .5s ease; }
+    .page.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+    .hero {
+      min-height: 90vh;
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, #1a1208 0%, #3d2b13 60%, #7a5c34 100%);
+      position: relative; overflow: hidden; padding: 4rem 2rem;
+      text-align: center;
+    }
+    .hero-bg-circles { position: absolute; inset: 0; overflow: hidden; }
+    .hero-bg-circles::before, .hero-bg-circles::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(201,153,58,.2);
+    }
+    .hero-bg-circles::before { width: 600px; height: 600px; top: -200px; right: -150px; }
+    .hero-bg-circles::after  { width: 400px; height: 400px; bottom: -100px; left: -100px; }
+    .hero-content { position: relative; z-index: 2; max-width: 700px; }
+    .hero-eyebrow {
+      font-size: .8rem; letter-spacing: .3em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 1.2rem;
+      animation: slideDown .8s .1s both;
+    }
+    .hero h1 {
+      font-family: var(--ff-display);
+      font-size: clamp(2.8rem, 8vw, 5.5rem);
+      color: var(--cream); line-height: 1.1;
+      animation: slideDown .8s .2s both;
+    }
+    .hero h1 em { color: var(--gold); font-style: italic; }
+    .hero-sub {
+      color: var(--paper); font-size: 1.15rem;
+      margin: 1.5rem 0 2.5rem;
+      font-weight: 300;
+      animation: slideDown .8s .35s both;
+    }
+    .btn {
+      display: inline-block;
+      padding: .85rem 2.4rem;
+      font-family: var(--ff-body);
+      font-size: 1rem; letter-spacing: .12em; text-transform: uppercase;
+      border: 1px solid var(--gold);
+      color: var(--ink); background: var(--gold);
+      cursor: pointer; transition: background .25s, color .25s, transform .2s;
+      border-radius: 2px;
+    }
+    .btn:hover { background: transparent; color: var(--gold); transform: translateY(-2px); }
+    .btn-outline { background: transparent; color: var(--gold); }
+    .btn-outline:hover { background: var(--gold); color: var(--ink); }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .features-strip {
+      background: var(--paper);
+      display: flex; flex-wrap: wrap; justify-content: center;
+      gap: 0; border-top: 1px solid rgba(122,92,52,.2);
+    }
+    .feature-item {
+      flex: 1 1 200px; max-width: 280px;
+      padding: 2rem 1.5rem; text-align: center;
+      border-right: 1px solid rgba(122,92,52,.15);
+      transition: background .25s;
+    }
+    .feature-item:last-child { border-right: none; }
+    .feature-item:hover { background: var(--cream); }
+    .feature-icon { font-size: 2rem; margin-bottom: .6rem; }
+    .feature-title { font-family: var(--ff-display); font-size: 1rem; margin-bottom: .3rem; color: var(--sepia); }
+    .feature-desc { font-size: .9rem; color: #5a4a30; }
+
+    .section { padding: 5rem 2rem; max-width: 1100px; margin: 0 auto; }
+    .section-title {
+      font-family: var(--ff-display);
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      color: var(--sepia); margin-bottom: .5rem;
+    }
+    .section-sub { color: #7a6a50; font-size: 1rem; margin-bottom: 3rem; }
+    .divider {
+      width: 60px; height: 2px; background: var(--gold);
+      margin: .8rem 0 2rem;
+    }
+    .testimonials-slider { position: relative; overflow: hidden; }
+    .testimonials-track { display: flex; transition: transform .5s ease; }
+    .testimonial {
+      min-width: 100%;
+      background: var(--paper);
+      padding: 3rem; border-left: 4px solid var(--gold);
+      border-radius: 2px;
+    }
+    .testimonial-text {
+      font-size: 1.25rem; font-style: italic;
+      color: var(--ink); margin-bottom: 1.5rem;
+      font-family: var(--ff-display);
+    }
+    .testimonial-author { font-size: .9rem; letter-spacing: .1em; text-transform: uppercase; color: var(--sepia); }
+    .slider-controls { display: flex; gap: 1rem; margin-top: 1.5rem; }
+    .slider-btn {
+      width: 40px; height: 40px;
+      border: 1px solid var(--sepia); background: transparent;
+      color: var(--sepia); cursor: pointer; font-size: 1.1rem;
+      border-radius: 50%; transition: .25s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .slider-btn:hover { background: var(--sepia); color: var(--cream); }
+
+    .shop-hero {
+      background: linear-gradient(to right, var(--ink), #3d2b13);
+      padding: 3rem 2rem; text-align: center;
+    }
+    .shop-hero h2 { font-family: var(--ff-display); font-size: 2.5rem; color: var(--gold); }
+    .shop-hero p { color: var(--paper); margin-top: .5rem; }
+
+    .filters {
+      display: flex; flex-wrap: wrap; gap: .8rem;
+      padding: 2rem 2rem 0;
+      max-width: 1100px; margin: 0 auto;
+    }
+    .filter-btn {
+      padding: .45rem 1.4rem;
+      border: 1px solid var(--sepia); background: transparent;
+      color: var(--sepia); cursor: pointer; border-radius: 20px;
+      font-family: var(--ff-body); font-size: .95rem;
+      transition: .25s;
+    }
+    .filter-btn.active, .filter-btn:hover { background: var(--sepia); color: var(--cream); }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 2rem; padding: 2rem;
+      max-width: 1100px; margin: 0 auto;
+    }
+    .product-card {
+      background: var(--paper);
+      border-radius: 3px; overflow: hidden;
+      box-shadow: 0 4px 18px var(--shadow);
+      transition: transform .3s, box-shadow .3s;
+      cursor: pointer;
+    }
+    .product-card:hover { transform: translateY(-6px); box-shadow: 0 10px 30px rgba(26,18,8,.25); }
+    .product-img {
+      height: 220px; overflow: hidden; position: relative;
+      background: linear-gradient(135deg, #3d2b13, #7a5c34);
+    }
+    .product-img img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform .5s;
+    }
+    .product-card:hover .product-img img { transform: scale(1.06); }
+    .product-img-fallback {
+      width: 100%; height: 100%;
+      background: linear-gradient(135deg, #3d2b13 0%, #7a5c34 60%, #c9993a 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3.5rem;
+    }
+    .product-badge {
+      position: absolute; top: 12px; left: 12px;
+      background: var(--rust); color: #fff;
+      font-size: .75rem; letter-spacing: .1em; text-transform: uppercase;
+      padding: .2rem .7rem; border-radius: 2px;
+    }
+    .product-info { padding: 1.3rem 1.5rem; }
+    .product-era { font-size: .78rem; letter-spacing: .15em; text-transform: uppercase; color: var(--gold); margin-bottom: .3rem; }
+    .product-name { font-family: var(--ff-display); font-size: 1.2rem; margin-bottom: .4rem; }
+    .product-origin { font-size: .82rem; color: var(--sepia); font-style: italic; margin-bottom: .4rem; }
+    .product-desc { font-size: .9rem; color: #5a4a30; margin-bottom: 1rem; line-height: 1.5; }
+    .product-footer { display: flex; align-items: center; justify-content: space-between; }
+    .product-price { font-family: var(--ff-display); font-size: 1.35rem; color: var(--rust); }
+    .add-cart-btn {
+      background: var(--ink); color: var(--gold);
+      border: none; padding: .5rem 1rem;
+      font-family: var(--ff-body); font-size: .85rem; letter-spacing: .08em;
+      cursor: pointer; border-radius: 2px; transition: .25s;
+    }
+    .add-cart-btn:hover { background: var(--gold); color: var(--ink); }
+
+    .about-split {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+      min-height: 60vh; max-width: 1100px; margin: 3rem auto;
+      border-radius: 4px; overflow: hidden;
+      box-shadow: 0 8px 32px var(--shadow);
+    }
+    .about-visual {
+      background: linear-gradient(145deg, #3d2b13, #7a5c34);
+      display: flex; align-items: center; justify-content: center;
+      padding: 3rem; color: var(--cream); text-align: center;
+    }
+    .about-visual .big-year {
+      font-family: var(--ff-display);
+      font-size: 7rem; color: var(--gold); opacity: .2;
+      position: absolute; line-height: 1;
+    }
+    .about-visual .icon-stack { position: relative; z-index: 1; }
+    .about-visual .icon-stack span { font-size: 4rem; display: block; margin-bottom: 1rem; }
+    .about-visual .icon-stack p { font-size: 1.1rem; color: var(--paper); font-style: italic; }
+    .about-text { background: var(--paper); padding: 4rem 3rem; }
+    .about-text h2 { font-family: var(--ff-display); font-size: 2rem; color: var(--sepia); margin-bottom: .5rem; }
+    .about-text p { font-size: 1.05rem; color: #4a3a20; margin-bottom: 1.2rem; }
+
+    .team-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 2rem; padding: 0 2rem 4rem;
+      max-width: 1100px; margin: 0 auto;
+    }
+    .team-card {
+      background: var(--paper); border-radius: 3px;
+      padding: 2rem; text-align: center;
+      box-shadow: 0 4px 16px var(--shadow);
+      transition: transform .3s;
+    }
+    .team-card:hover { transform: translateY(-4px); }
+    .team-avatar {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--sepia), var(--gold));
+      margin: 0 auto 1rem;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; color: var(--cream);
+      overflow: hidden;
+    }
+    .team-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .team-name { font-family: var(--ff-display); font-size: 1.15rem; margin-bottom: .2rem; }
+    .team-role { font-size: .85rem; color: var(--sepia); text-transform: uppercase; letter-spacing: .1em; }
+
+    /* GALLERY */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.2rem; padding: 2rem;
+      max-width: 1200px; margin: 0 auto;
+    }
+    .gallery-item {
+      position: relative; overflow: hidden; border-radius: 3px;
+      cursor: pointer; aspect-ratio: 4/3;
+      background: var(--paper);
+      box-shadow: 0 4px 16px var(--shadow);
+    }
+    .gallery-item:nth-child(3n) { aspect-ratio: 4/5; }
+    .gallery-item img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform .5s;
+      display: block;
+    }
+    .gallery-item:hover img { transform: scale(1.06); }
+    .gallery-overlay {
+      position: absolute; inset: 0;
+      background: rgba(26,18,8,.7);
+      opacity: 0; transition: opacity .35s;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      color: var(--cream); text-align: center; padding: 1.5rem;
+    }
+    .gallery-item:hover .gallery-overlay { opacity: 1; }
+    .gallery-overlay h3 { font-family: var(--ff-display); font-size: 1.2rem; margin-bottom: .4rem; color: var(--gold); }
+    .gallery-overlay p { font-size: .9rem; }
+
+    .lightbox {
+      display: none; position: fixed; inset: 0; z-index: 2000;
+      background: rgba(0,0,0,.92);
+      align-items: center; justify-content: center;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox-inner { max-width: 700px; width: 90%; text-align: center; position: relative; }
+    .lightbox-close {
+      position: absolute; top: -40px; right: 0;
+      color: var(--gold); font-size: 1.8rem; cursor: pointer; background: none; border: none;
+    }
+    .lightbox-img {
+      width: 100%; height: 400px;
+      border-radius: 4px; overflow: hidden; margin-bottom: 1rem;
+      background: linear-gradient(135deg, var(--ink), #3d2b13);
+    }
+    .lightbox-img img { width: 100%; height: 100%; object-fit: cover; }
+    .lightbox-caption { color: var(--paper); font-family: var(--ff-display); font-size: 1.3rem; }
+
+    .contact-wrapper {
+      max-width: 900px; margin: 4rem auto; padding: 0 2rem;
+      display: grid; grid-template-columns: 1fr 1.4fr; gap: 3rem;
+    }
+    .contact-info h2 { font-family: var(--ff-display); font-size: 2rem; color: var(--sepia); margin-bottom: 1rem; }
+    .contact-info p { color: #5a4a30; margin-bottom: 1.5rem; }
+    .contact-item { display: flex; align-items: flex-start; gap: .8rem; margin-bottom: 1.2rem; }
+    .contact-icon { font-size: 1.3rem; margin-top: .1rem; }
+    .contact-detail strong { display: block; font-family: var(--ff-display); color: var(--sepia); }
+    .contact-detail span { font-size: .95rem; color: #5a4a30; }
+
+    .contact-form { background: var(--paper); padding: 2.5rem; border-radius: 4px; box-shadow: 0 6px 24px var(--shadow); }
+    .contact-form h3 { font-family: var(--ff-display); font-size: 1.5rem; color: var(--sepia); margin-bottom: 1.5rem; }
+    .form-group { margin-bottom: 1.3rem; }
+    .form-group label { display: block; font-size: .85rem; letter-spacing: .1em; text-transform: uppercase; color: var(--sepia); margin-bottom: .5rem; }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%; padding: .8rem 1rem;
+      background: var(--cream); border: 1px solid rgba(122,92,52,.3);
+      font-family: var(--ff-body); font-size: 1rem; color: var(--ink);
+      border-radius: 2px; outline: none; transition: border-color .25s;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color: var(--gold); }
+    .form-group textarea { resize: vertical; min-height: 120px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-msg {
+      display: none; padding: 1rem;
+      background: #4a5e3a; color: #d4ecc8;
+      border-radius: 2px; margin-top: 1rem; font-size: .95rem;
+    }
+    .form-msg.show { display: block; }
+
+    footer {
+      background: var(--ink); color: var(--paper);
+      padding: 4rem 2rem 2rem;
+    }
+    .footer-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 2rem; max-width: 1100px; margin: 0 auto 2rem;
+    }
+    .footer-col h4 { font-family: var(--ff-display); color: var(--gold); margin-bottom: 1rem; font-size: 1.1rem; }
+    .footer-col p, .footer-col a { font-size: .9rem; color: #a08060; display: block; margin-bottom: .4rem; transition: color .2s; }
+    .footer-col a:hover { color: var(--gold); }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,.1); padding-top: 1.5rem; text-align: center; color: #6a5a40; font-size: .85rem; max-width: 1100px; margin: 0 auto; }
+
+    .toast {
+      position: fixed; bottom: 2rem; right: 2rem; z-index: 3000;
+      background: var(--moss); color: var(--cream);
+      padding: 1rem 1.8rem; border-radius: 4px;
+      font-family: var(--ff-body); font-size: 1rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,.3);
+      transform: translateY(100px); opacity: 0;
+      transition: .4s cubic-bezier(.175,.885,.32,1.275);
+      pointer-events: none;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    /* Loading skeleton */
+    .img-loading {
+      background: linear-gradient(90deg, #d4c9a8 25%, #e8dfc5 50%, #d4c9a8 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: var(--ink); padding: 1.5rem 2rem; gap: 1.2rem; }
+      .nav-links.open { display: flex; }
+      .nav-toggle { display: flex; }
+      .about-split { grid-template-columns: 1fr; }
+      .contact-wrapper { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      .products-grid { grid-template-columns: 1fr; }
+      .gallery-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
 
-<div class="progress-bar" id="progressBar"></div>
-
-<nav>
-  <div class="nav-logo" onclick="goPage('accueil')">VictoryLand</div>
-  <div class="nav-links">
-    <button class="nav-link active" data-page="accueil" onclick="goPage('accueil')">Accueil</button>
-    <button class="nav-link" data-page="jeux" onclick="goPage('jeux')">Jeux</button>
-    <button class="nav-link" data-page="classement" onclick="goPage('classement')">Classement</button>
-    <button class="nav-link" data-page="boutique" onclick="goPage('boutique')">Boutique</button>
-    <button class="nav-link" data-page="profil" onclick="goPage('profil')">Profil</button>
-  </div>
-  <div class="nav-right">
-    <div class="coins-badge"><div class="coin-dot"></div><span id="coinsDisplay">1 250</span></div>
-    <div class="avatar" onclick="goPage('profil')">AKB</div>
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-logo">Antiqua <span>·</span> Trésors</div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#" onclick="showPage('home')">Accueil</a></li>
+    <li><a href="#" onclick="showPage('produits')">Produits</a></li>
+    <li><a href="#" onclick="showPage('apropos')">À Propos</a></li>
+    <li><a href="#" onclick="showPage('galerie')">Galerie</a></li>
+    <li><a href="#" onclick="showPage('contact')">Contact</a></li>
+  </ul>
+  <div class="nav-toggle" id="navToggle" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
   </div>
 </nav>
 
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal()">✕</button>
-    <div class="modal-thumb" id="modalThumb">🎮</div>
-    <div class="modal-name" id="modalName">Jeu</div>
-    <div class="modal-desc" id="modalDesc">Description du jeu</div>
-    <button class="modal-play" onclick="startGame()">▶️  Jouer maintenant</button>
+<!-- PAGE 1 — ACCUEIL -->
+<section class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-bg-circles"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">✦ Collection Exclusive ✦</p>
+      <h1>L'Art des <em>Objets</em><br>Anciens</h1>
+      <p class="hero-sub">Des pièces authentiques soigneusement sélectionnées, chargées d'histoire et de caractère. Livraison partout au Maroc.</p>
+      <button class="btn" onclick="showPage('produits')">Découvrir la Collection</button>
+      &nbsp;
+      <button class="btn btn-outline" onclick="showPage('galerie')">Voir la Galerie</button>
+    </div>
   </div>
-</div>
 
-<div class="notif" id="notif">
-  <span class="notif-icon" id="notifIcon">✅</span>
-  <span class="notif-text" id="notifText">Action effectuée</span>
-</div>
-
-<div class="page active" id="page-accueil">
-  <section class="hero">
-    <div class="hero-bg"></div>
-    <div class="hero-tag"><div class="tag-dot"></div>Plateforme de jeux en ligne</div>
-    <h1 class="hero-title">Explore. Collabore.<br><span class="gradient-word">Découvre.</span></h1>
-    <p class="hero-sub">Des centaines de jeux, des tournois en direct et une communauté de millions de joueurs qui t'attendent.</p>
-    <div class="hero-cta">
-      <button class="btn-primary" onclick="goPage('jeux')">Explorer les jeux</button>
-      <button class="btn-secondary" onclick="goPage('classement')">Voir le classement</button>
+  <div class="features-strip">
+    <div class="feature-item">
+      <div class="feature-icon">🔍</div>
+      <div class="feature-title">Authenticité Certifiée</div>
+      <div class="feature-desc">Chaque objet est expertisé et authentifié avant la mise en vente.</div>
     </div>
-    <div class="hero-stats">
-      <div class="stat-item"><div class="stat-val">248K</div><div class="stat-label">Joueurs actifs</div></div>
-      <div class="stat-item"><div class="stat-val">500+</div><div class="stat-label">Jeux disponibles</div></div>
-      <div class="stat-item"><div class="stat-val">12M</div><div class="stat-label">Parties jouées</div></div>
+    <div class="feature-item">
+      <div class="feature-icon">🚚</div>
+      <div class="feature-title">Livraison Partout au Maroc</div>
+      <div class="feature-desc">Emballage soigné et livraison assurée dans toutes les villes du Royaume.</div>
     </div>
-    <div class="hero-cards">
-      <div class="floating-card">
-        <div class="fc-top">
-          <div class="fc-icon purple">🌌</div>
-          <div><div class="fc-name">NovaStar</div><div class="fc-genre">Action · Sci-Fi</div></div>
-        </div>
-        <div class="fc-bar"><div class="fc-fill" style="width:78%"></div></div>
-      </div>
-      <div class="floating-card">
-        <div class="fc-top">
-          <div class="fc-icon pink">🐉</div>
-          <div><div class="fc-name">Dragon</div><div class="fc-genre">RPG · Fantasy</div></div>
-        </div>
-        <div class="fc-bar"><div class="fc-fill" style="width:62%"></div></div>
-      </div>
+    <div class="feature-item">
+      <div class="feature-icon">🤝</div>
+      <div class="feature-title">Service Personnalisé</div>
+      <div class="feature-desc">Conseils d'experts pour trouver la pièce de vos rêves.</div>
     </div>
-  </section>
-
-  <section class="section">
-    <div class="section-header">
-      <div class="section-title">🔥 Jeux populaires</div>
-      <span class="section-link" onclick="goPage('jeux')">Voir tout →</span>
+    <div class="feature-item">
+      <div class="feature-icon">💳</div>
+      <div class="feature-title">Paiement Sécurisé</div>
+      <div class="feature-desc">Transactions sûres, retour garanti sous 14 jours.</div>
     </div>
-    <div class="game-grid" id="homeGameGrid"></div>
-  </section>
-</div>
-
-<div class="page" id="page-jeux">
-  <div class="page-hero">
-    <h1 class="page-hero-title">🎮 Bibliothèque de jeux</h1>
-    <p class="page-hero-sub">Découvre tous les jeux disponibles sur VictoryLand</p>
   </div>
-  <div class="filters" id="filtersBar"></div>
-  <div class="games-grid" id="allGamesGrid"></div>
-</div>
 
-<div class="page" id="page-classement">
-  <div class="leaderboard">
-    <div class="lb-header">
-      <h1 class="lb-title">🏆 Classement</h1>
-      <p class="lb-sub">Les meilleurs joueurs de la semaine</p>
-    </div>
-    <div class="lb-tabs">
-      <button class="lb-tab active" onclick="setLbTab(this,'global')">Global</button>
-      <button class="lb-tab" onclick="setLbTab(this,'amis')">Amis</button>
-    </div>
-    <div class="lb-list" id="lbList"></div>
-  </div>
-</div>
-
-<div class="page" id="page-boutique">
-  <div class="shop">
-    <div class="shop-header">
-      <h1 class="shop-title">🛒 Boutique</h1>
-      <p class="shop-sub">Utilise tes pièces pour débloquer des objets exclusifs</p>
-    </div>
-    <div class="shop-balance">
-      <span class="balance-icon">🪙</span>
-      <div>
-        <div class="balance-label">Solde</div>
-        <div class="balance-val" id="shopCoins">1 250</div>
-      </div>
-    </div>
-    <div class="shop-grid" id="shopGrid"></div>
-  </div>
-</div>
-
-<div class="page" id="page-profil">
-  <div class="profil">
-    <div class="profil-top">
-      <div class="profil-avatar">AKB</div>
-      <div class="profil-info">
-        <div class="profil-name">AKBprime</div>
-        <div class="profil-handle">@AKB · Membre depuis 2023</div>
-        <div class="profil-badges">
-          <span class="p-badge pb-purple">⚡ Élite</span>
-          <span class="p-badge pb-green">🌟 Top 100</span>
-          <span class="p-badge pb-gold">🏆 Champion</span>
+  <div class="section">
+    <p class="section-title">Ce Que Disent Nos Clients</p>
+    <div class="divider"></div>
+    <div class="testimonials-slider">
+      <div class="testimonials-track" id="testimonialsTrack">
+        <div class="testimonial">
+          <div class="testimonial-text">« J'ai trouvé chez Antiqua une horloge de parquet d'une beauté rare. L'expertise et la passion de l'équipe m'ont conquis dès le premier contact. »</div>
+          <div class="testimonial-author">— Fatima Z., Casablanca</div>
         </div>
-      </div>
-      <div class="profil-stats">
-        <div class="ps-item"><div class="ps-val">847</div><div class="ps-key">Victoires</div></div>
-        <div class="ps-item"><div class="ps-val">42</div><div class="ps-key">Niveau</div></div>
-        <div class="ps-item"><div class="ps-val">1250</div><div class="ps-key">Pièces</div></div>
-      </div>
-    </div>
-    <div class="profil-grid">
-      <div class="p-card">
-        <div class="p-card-title"><span class="p-card-icon">⚡</span> Activité récente</div>
-        <div class="activity-list">
-          <div class="activity-item">
-            <div class="act-icon purple">🌌</div>
-            <div class="act-desc">Victoire sur <b>NovaStar</b> — Score: 12,450</div>
-            <div class="act-time">2h</div>
-          </div>
-          <div class="activity-item">
-            <div class="act-icon pink">🐉</div>
-            <div class="act-desc">Niveau 15 atteint sur <b>Dragon</b></div>
-            <div class="act-time">5h</div>
-          </div>
-          <div class="activity-item">
-            <div class="act-icon green">🧩</div>
-            <div class="act-desc">Achat: <b>Skin Galactique</b> (–500 pièces)</div>
-            <div class="act-time">1j</div>
-          </div>
-          <div class="activity-item">
-            <div class="act-icon purple">🏆</div>
-            <div class="act-desc">Top 10 du tournoi <b>Hebdo</b></div>
-            <div class="act-time">2j</div>
-          </div>
+        <div class="testimonial">
+          <div class="testimonial-text">« Une collection exceptionnelle et un service impeccable. Je recommande Antiqua à tous les passionnés d'objets anciens. Qualité et sérieux au rendez-vous. »</div>
+          <div class="testimonial-author">— Karim B., Rabat</div>
         </div>
-      </div>
-      <div class="p-card">
-        <div class="p-card-title"><span class="p-card-icon">📊</span> Compétences</div>
-        <div class="skills-list">
-          <div class="skill-item">
-            <div class="skill-header"><span>Réflexes</span><span class="skill-pct">88%</span></div>
-            <div class="skill-bar"><div class="skill-fill sf-purple" style="width:88%"></div></div>
-          </div>
-          <div class="skill-item">
-            <div class="skill-header"><span>Stratégie</span><span class="skill-pct">72%</span></div>
-            <div class="skill-bar"><div class="skill-fill sf-pink" style="width:72%"></div></div>
-          </div>
-          <div class="skill-item">
-            <div class="skill-header"><span>Endurance</span><span class="skill-pct">95%</span></div>
-            <div class="skill-bar"><div class="skill-fill sf-green" style="width:95%"></div></div>
-          </div>
-          <div class="skill-item">
-            <div class="skill-header"><span>Précision</span><span class="skill-pct">64%</span></div>
-            <div class="skill-bar"><div class="skill-fill sf-gold" style="width:64%"></div></div>
-          </div>
+        <div class="testimonial">
+          <div class="testimonial-text">« Grâce à Antiqua, j'ai pu compléter ma collection de céramiques Art Nouveau avec des pièces introuvables ailleurs. La livraison à Fès était rapide et soignée ! »</div>
+          <div class="testimonial-author">— Nadia T., Fès</div>
         </div>
       </div>
     </div>
+    <div class="slider-controls">
+      <button class="slider-btn" onclick="prevSlide()">&#8592;</button>
+      <button class="slider-btn" onclick="nextSlide()">&#8594;</button>
+    </div>
+  </div>
+</section>
+
+<!-- PAGE 2 — PRODUITS -->
+<section class="page" id="page-produits">
+  <div class="shop-hero">
+    <h2>Notre Collection</h2>
+    <p>Des trésors authentiques du XVIIIe au XXe siècle — Livraison partout au Maroc</p>
+  </div>
+
+  <div class="filters">
+    <button class="filter-btn active" onclick="filterProducts('all', this)">Tous</button>
+    <button class="filter-btn" onclick="filterProducts('mobilier', this)">Mobilier</button>
+    <button class="filter-btn" onclick="filterProducts('ceramique', this)">Céramique</button>
+    <button class="filter-btn" onclick="filterProducts('tableau', this)">Tableaux</button>
+    <button class="filter-btn" onclick="filterProducts('bijou', this)">Bijoux</button>
+    <button class="filter-btn" onclick="filterProducts('horloge', this)">Horlogerie</button>
+    <button class="filter-btn" onclick="filterProducts('textile', this)">Textiles</button>
+    <button class="filter-btn" onclick="filterProducts('bronze', this)">Bronzes & Cuivres</button>
+    <button class="filter-btn" onclick="filterProducts('arme', this)">Armes Décoratives</button>
+  </div>
+
+  <div class="products-grid" id="productsGrid"></div>
+</section>
+
+<!-- PAGE 3 — À PROPOS -->
+<section class="page" id="page-apropos">
+  <div class="about-split">
+    <div class="about-visual" style="position:relative;">
+      <div class="big-year">1887</div>
+      <div class="icon-stack">
+        <span>🏺</span>
+        <p>« Chaque objet porte<br>l'âme de son époque. »</p>
+      </div>
+    </div>
+    <div class="about-text">
+      <h2>Notre Histoire</h2>
+      <div class="divider"></div>
+      <p>Fondée en 1887 à Marrakech, la maison <strong>Antiqua</strong> est née de la passion de Moulay Hassan El Fassi pour les objets d'art et les antiquités du Maroc. Depuis quatre générations, nous perpétuons cette tradition d'excellence au cœur de Guéliz.</p>
+      <p>Notre expertise couvre les meubles anciens en cèdre et thuya, la céramique de Fès et Salé, la peinture orientaliste, l'horlogerie et les bijoux amazighs de collection, du XVIIIe siècle à l'Art Déco des années 1930.</p>
+      <p>Chaque pièce présentée dans notre galerie est soigneusement expertisée, restaurée si nécessaire, et accompagnée d'un certificat d'authenticité reconnu par le Ministère de la Culture du Maroc. Nous livrons partout au Maroc.</p>
+      <button class="btn" onclick="showPage('contact')">Nous Contacter</button>
+    </div>
+  </div>
+
+  <div class="section" style="padding-top:1rem;">
+    <p class="section-title">Notre Équipe</p>
+    <div class="divider"></div>
+  </div>
+  <div class="team-grid">
+    <div class="team-card">
+      <div class="team-avatar">
+        <img src="https://images.pexels.com/photos/7428857/pexels-photo-7428857.jpeg?cs=srgb&dl=pexels-cottonbro-7428857.jpg&fm=jpg&_gl=1*1j4vnl*_ga*ODI4NDEyOTAzLjE3Nzc0NzgyMTA.*_ga_8JE65Q40S6*czE3Nzc0NzgyMDkkbzEkZzEkdDE3Nzc0NzgyNTkkajEwJGwwJGgw" alt=" photo de Conservateur">
+      </div>
+      <div class="team-name">Bayane Tahiri</div>
+      <div class="team-role">Conservateur en chef</div>
+    </div>
+    <div class="team-card">
+      <div class="team-avatar">
+        <img src="https://images.pexels.com/photos/8528742/pexels-photo-8528742.jpeg?cs=srgb&dl=pexels-karola-g-8528742.jpg&fm=jpg&_gl=1*ab5n3h*_ga*ODI4NDEyOTAzLjE3Nzc0NzgyMTA.*_ga_8JE65Q40S6*czE3Nzc0NzgyMDkkbzEkZzEkdDE3Nzc0NzgyNzQkajYwJGwwJGgw" alt="photo de l'expert">
+      </div>
+      <div class="team-name">Khadija Zahraoui</div>
+      <div class="team-role">Expert en Design Traditionnel</div>
+    </div>
+    <div class="team-card">
+      <div class="team-avatar">
+        <img src="https://images.pexels.com/photos/7706959/pexels-photo-7706959.jpeg?cs=srgb&dl=pexels-a-darmel-7706959.jpg&fm=jpg&_gl=1*8eb5w2*_ga*ODI4NDEyOTAzLjE3Nzc0NzgyMTA.*_ga_8JE65Q40S6*czE3Nzc0NzgyMDkkbzEkZzEkdDE3Nzc0NzgyNzQkajYwJGwwJGgw" alt="photo d'Ambassadeur">
+      </div>
+      <div class="team-name">Amal Nejmi</div>
+      <div class="team-role">Ambassadeur de l'Artisanat</div>
+    </div>
+  </div>
+</section>
+
+<!-- PAGE 4 — GALERIE -->
+<section class="page" id="page-galerie">
+  <div class="section" style="padding-bottom:1rem;">
+    <p class="section-title">Galerie</p>
+    <div class="divider"></div>
+    <p class="section-sub">Cliquez sur une pièce pour en savoir plus</p>
+  </div>
+  <div class="gallery-grid" id="galleryGrid"></div>
+</section>
+
+<!-- PAGE 5 — CONTACT -->
+<section class="page" id="page-contact">
+  <div class="section" style="padding-bottom:0;">
+    <p class="section-title">Contactez-Nous</p>
+    <div class="divider"></div>
+  </div>
+  <div class="contact-wrapper">
+    <div class="contact-info">
+      <h2>Nous Sommes à Votre Service</h2>
+      <p>Notre équipe d'experts est disponible pour répondre à toutes vos questions sur nos collections, expertises et services de recherche.</p>
+      <div class="contact-item">
+        <div class="contact-icon">📍</div>
+        <div class="contact-detail">
+          <strong>Adresse</strong>
+          <span>12 Rue de la Liberté, Guéliz, Marrakech 40000</span>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon">📞</div>
+        <div class="contact-detail">
+          <strong>Téléphone</strong>
+          <span>+212 (0)5 24 43 22 15</span>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon">✉️</div>
+        <div class="contact-detail">
+          <strong>Email</strong>
+          <span>contact@antiqua-marrakech.ma</span>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon">🚚</div>
+        <div class="contact-detail">
+          <strong>Livraison</strong>
+          <span>Partout au Maroc — Casablanca, Rabat, Fès, Tanger, Agadir et toutes les villes</span>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon">🕐</div>
+        <div class="contact-detail">
+          <strong>Horaires</strong>
+          <span>Lundi–Samedi : 9h–20h | Dimanche : 10h–17h</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="contact-form">
+      <h3>Envoyer un Message</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Prénom</label>
+          <input type="text" id="fPrenom" placeholder="Mohammed" />
+        </div>
+        <div class="form-group">
+          <label>Nom</label>
+          <input type="text" id="fNom" placeholder="Alaoui" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="fEmail" placeholder="votre@email.com" />
+      </div>
+      <div class="form-group">
+        <label>Ville</label>
+        <select id="fVille">
+          <option value="">— Votre ville —</option>
+          <option>Marrakech</option>
+          <option>Casablanca</option>
+          <option>Rabat</option>
+          <option>Fès</option>
+          <option>Tanger</option>
+          <option>Agadir</option>
+          <option>Meknès</option>
+          <option>Oujda</option>
+          <option>Autre</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Sujet</label>
+        <select id="fSujet">
+          <option value="">— Choisissez un sujet —</option>
+          <option>Information sur un produit</option>
+          <option>Expertise d'un objet</option>
+          <option>Demande de livraison</option>
+          <option>Demande de recherche</option>
+          <option>Partenariat</option>
+          <option>Autre</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Message</label>
+        <textarea id="fMessage" placeholder="Décrivez votre demande..."></textarea>
+      </div>
+      <button class="btn" style="width:100%;" onclick="submitForm()">Envoyer le Message</button>
+      <div class="form-msg" id="formMsg">✓ Votre message a bien été envoyé ! Nous vous répondrons sous 48h.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-col">
+      <h4>Antiqua</h4>
+      <p>La référence marocaine des antiquités et objets d'art depuis 1887. Guéliz, Marrakech. Livraison partout au Maroc.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Navigation</h4>
+      <a href="#" onclick="showPage('home')">Accueil</a>
+      <a href="#" onclick="showPage('produits')">Produits</a>
+      <a href="#" onclick="showPage('apropos')">À Propos</a>
+      <a href="#" onclick="showPage('galerie')">Galerie</a>
+      <a href="#" onclick="showPage('contact')">Contact</a>
+    </div>
+    <div class="footer-col">
+      <h4>Collections</h4>
+      <a href="#">Mobilier Ancien</a>
+      <a href="#">Céramique & Porcelaine</a>
+      <a href="#">Tableaux & Gravures</a>
+      <a href="#">Horlogerie</a>
+      <a href="#">Bijoux de Collection</a>
+      <a href="#">Textiles & Tapis</a>
+      <a href="#">Bronzes & Cuivres</a>
+    </div>
+    <div class="footer-col">
+      <h4>Livraison</h4>
+      <a href="#">Casablanca & Rabat</a>
+      <a href="#">Fès & Meknès</a>
+      <a href="#">Tanger & Nord</a>
+      <a href="#">Agadir & Sud</a>
+      <a href="#">Toutes les villes</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    ©️ 2026 Antiqua — Trésors · Guéliz, Marrakech, Maroc. Tous droits réservés. | Livraison partout au Maroc
+  </div>
+</footer>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+  <div class="lightbox-inner">
+    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+    <div class="lightbox-img" id="lightboxImg"></div>
+    <div class="lightbox-caption" id="lightboxCaption"></div>
   </div>
 </div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✓ Ajouté au panier !</div>
 
 <script>
-// ====================================================
-// DATA
-// ====================================================
-const games = [
-  { id:1, name:'NovaStar', emoji:'🌌', genre:'Action', bg:'linear-gradient(135deg,#1a0a3a,#2a1060)', stars:'⭐⭐⭐⭐⭐', desc:'Un jeu de survie spatiale intense avec des combats épiques et des vaisseaux personnalisables.', players:'12.4K', pop:78 },
-  { id:2, name:'Dragon', emoji:'🐉', genre:'RPG', bg:'linear-gradient(135deg,#1a0a10,#3a1020)', stars:'⭐⭐⭐⭐', desc:'Forge ton destin dans un monde fantastique peuplé de dragons et de magie ancienne.', players:'8.1K', pop:62 },
-  { id:3, name:'CyberRun', emoji:'🤖', genre:'Course', bg:'linear-gradient(135deg,#001a2a,#002a40)', stars:'⭐⭐⭐⭐⭐', desc:'Fonce à travers une mégapole cyberpunk sur des bolides futuristes à pleine vitesse.', players:'15.2K', pop:90 },
-  { id:4, name:'Puzzle', emoji:'🧩', genre:'Puzzle', bg:'linear-gradient(135deg,#0a1a0a,#102a10)', stars:'⭐⭐⭐⭐', desc:'Des énigmes redoutables qui mettent ton cerveau à l\'épreuve dans des décors magnifiques.', players:'5.6K', pop:55 },
-  { id:5, name:'Aqua Venture', emoji:'🌊', genre:'Aventure', bg:'linear-gradient(135deg,#001025,#001a35)', stars:'⭐⭐⭐⭐⭐', desc:'Explore les profondeurs océaniques à la recherche de trésors et créatures mystérieuses.', players:'9.3K', pop:70 },
-  { id:6, name:'Bit Battles', emoji:'🕹️', genre:'Rétro', bg:'linear-gradient(135deg,#1a1000,#2a1800)', stars:'⭐⭐⭐⭐', desc:'Un hommage aux jeux d\'arcade des années 80, amélioré pour l\'ère moderne.', players:'3.2K', pop:44 },
-  { id:7, name:'SkyFly', emoji:'✈️', genre:'Action', bg:'linear-gradient(135deg,#0a0a2a,#10102a)', stars:'⭐⭐⭐⭐⭐', desc:'Combats aériens spectaculaires dans des arènes volantes suspenduesdans les nuages.', players:'11.8K', pop:85 },
-  { id:8, name:'Dark Vault Go', emoji:'⚔️', genre:'RPG', bg:'linear-gradient(135deg,#1a0000,#2a0010)', stars:'⭐⭐⭐⭐', desc:'Gère ton propre donjon, recrute des monstres et défends-toi contre les héros.', players:'6.7K', pop:58 },
-];
-
-const leaderboardGlobal = [
-  { name:'darkjohan', game:'NovaStar', pts:'98,540', level:55, color:'linear-gradient(135deg,#f5c542,#ff9800)', initials:'DJ' },
-  { name:'faker', game:'CyberRun', pts:'87,210', level:50, color:'linear-gradient(135deg,#a0a0b0,#707080)', initials:'FK' },
-  { name:'mango', game:'Dragon', pts:'76,880', level:48, color:'linear-gradient(135deg,#cd7f32,#a05020)', initials:'MG' },
-  { name:'gotagaa', game:'SkyFly', pts:'65,400', level:42, color:'linear-gradient(135deg,#7c5cfc,#fc5c7d)', initials:'GT' },
-  { name:'dangeroustiger', game:'Aqua Venture', pts:'54,200', level:39, color:'linear-gradient(135deg,#5cf0b4,#20c080)', initials:'DT' },
-  { name:'ironman', game:'Dark Vault Go', pts:'48,750', level:36, color:'linear-gradient(135deg,#ff6060,#c03030)', initials:'IM' },
-  { name:'hunter', game:'Puzzle', pts:'41,100', level:33, color:'linear-gradient(135deg,#60c0ff,#2080c0)', initials:'HT' },
-  { name:'the killer', game:'Bit Battles', pts:'35,560', level:30, color:'linear-gradient(135deg,#ff80e0,#c040a0)', initials:'TK' },
-];
-
-const leaderboardAmis = [
-  { name:'supermario', game:'NovaStar', pts:'91,200', level:52, color:'linear-gradient(135deg,#ff6060,#c03030)', initials:'SM' },
-  { name:'urnightmare', game:'Dark Vault Go', pts:'82,450', level:46, color:'linear-gradient(135deg,#7c5cfc,#4010a0)', initials:'UN' },
-  { name:'avatar', game:'SkyFly', pts:'68,900', level:40, color:'linear-gradient(135deg,#60c0ff,#2080c0)', initials:'AV' }
-];
-
-const shopItems = [
-  { id:1, name:'Skin Galactique', desc:'Transforme ton avatar en explorateur de l\'espace.', emoji:'🌌', price:500, rarity:'epic', owned:true },
-  { id:2, name:'Ailes de Dragon', desc:'Des ailes légendaires qui font trembler tes ennemis.', emoji:'🐉', price:800, rarity:'epic', owned:false },
-  { id:3, name:'Turbo Boost', desc:'+20% de vitesse en jeu pendant 7 jours.', emoji:'⚡', price:250, rarity:'rare', owned:false },
-  { id:4, name:'Bouclier Néon', desc:'Un bouclier lumineux qui protège et impressionne.', emoji:'🛡️', price:350, rarity:'rare', owned:false },
-  { id:5, name:'Cadre Doré', desc:'Un cadre exclusif pour ton profil de joueur.', emoji:'🖼️', price:150, rarity:'common', owned:false },
-  { id:6, name:'Confettis', desc:'Des effets spéciaux lors de tes victoires.', emoji:'🎉', price:100, rarity:'common', owned:false },
-  { id:7, name:'Titre Champion', desc:'Affiche ton statut légendaire avec ce titre rare.', emoji:'🏆', price:1000, rarity:'epic', owned:false },
-  { id:8, name:'Double XP 24h', desc:'Double ton expérience pendant 24 heures.', emoji:'✨', price:200, rarity:'rare', owned:false },
-];
-
-let coins = 1250;
-let activeFilter = 'Tous';
-const genres = ['Tous', 'Action', 'RPG', 'Course', 'Puzzle', 'Aventure', 'Rétro'];
-
-// ====================================================
-// NAVIGATION
-// ====================================================
-function goPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-link').forEach(l => {
-    l.classList.toggle('active', l.dataset.page === id);
-  });
-  document.getElementById('page-' + id).classList.add('active');
-  window.scrollTo(0,0);
-
-  const map = { accueil:20, jeux:40, classement:60, boutique:80, profil:100 };
-  document.getElementById('progressBar').style.width = map[id] + '%';
-}
-
-// ====================================================
-// HOME GRID
-// ====================================================
-function renderHomeGrid() {
-  const top = games.slice(0,4);
-  document.getElementById('homeGameGrid').innerHTML = top.map(g => `
-    <div class="game-card" onclick="openModal(${g.id})">
-      ${g.id===1 ? '<span class="badge-new">Nouveau</span>' : ''}
-      <div class="game-thumb">
-        <div class="thumb-bg" style="background:${g.bg}"></div>
-        <span style="position:relative;font-size:3.5rem">${g.emoji}</span>
-      </div>
-      <div class="game-info">
-        <div class="game-name">${g.name}</div>
-        <div class="game-meta">
-          <span class="game-genre">${g.genre}</span>
-          <span class="game-stars">${g.stars}</span>
-        </div>
-      </div>
-    </div>
-  `).join('');
-}
-
-// ====================================================
-// JEUX GRID
-// ====================================================
-function renderFilters() {
-  document.getElementById('filtersBar').innerHTML = genres.map(g => `
-    <button class="filter-btn ${g===activeFilter?'active':''}" onclick="setFilter('${g}')">${g}</button>
-  `).join('');
-}
-
-function setFilter(f) {
-  activeFilter = f;
-  renderFilters();
-  renderAllGames();
-}
-
-function renderAllGames() {
-  const filtered = activeFilter === 'Tous' ? games : games.filter(g => g.genre === activeFilter);
-  document.getElementById('allGamesGrid').innerHTML = filtered.map(g => `
-    <div class="game-card-lg" onclick="openModal(${g.id})">
-      <div class="gcl-thumb">
-        <div style="position:absolute;inset:0;background:${g.bg};opacity:0.5"></div>
-        <span style="position:relative;font-size:3rem">${g.emoji}</span>
-      </div>
-      <div class="gcl-info">
-        <div class="gcl-name">${g.name}</div>
-        <div class="gcl-row">
-          <span class="gcl-genre">${g.genre}</span>
-          <span class="gcl-players">● ${g.players} joueurs</span>
-        </div>
-        <div class="gcl-bar"><div class="gcl-fill" style="width:${g.pop}%"></div></div>
-      </div>
-    </div>
-  `).join('');
-}
-
-// ====================================================
-// LEADERBOARD
-// ====================================================
-function renderLb(type='global') {
-  const data = type === 'amis' ? leaderboardAmis : leaderboardGlobal;
-  const rankClass = ['top1','top2','top3'];
-  const rankLabel = ['r1','r2','r3'];
-  document.getElementById('lbList').innerHTML = data.map((p,i) => `
-    <div class="lb-item ${i<3?rankClass[i]:''}">
-      <div class="lb-rank ${i<3?rankLabel[i]:''}">
-        ${i===0?'👑':i===1?'🥈':i===2?'🥉':i+1}
-      </div>
-      <div class="lb-avatar" style="background:${p.color}">${p.initials}</div>
-      <div class="lb-info">
-        <div class="lb-name">${p.name}</div>
-        <div class="lb-game">${p.game}</div>
-      </div>
-      <div class="lb-score">
-        <div class="lb-pts">${p.pts}</div>
-        <div class="lb-level">Niv. ${p.level}</div>
-      </div>
-    </div>
-  `).join('');
-}
-
-function setLbTab(el, type) {
-  document.querySelectorAll('.lb-tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  renderLb(type);
-}
-
-// ====================================================
-// BOUTIQUE
-// ====================================================
-function renderShop() {
-  document.getElementById('shopCoins').textContent = coins.toLocaleString('fr-FR');
-  document.getElementById('coinsDisplay').textContent = coins.toLocaleString('fr-FR');
-
-  document.getElementById('shopGrid').innerHTML = shopItems.map(item => `
-    <div class="shop-item">
-      <div class="si-thumb" style="background:linear-gradient(135deg,#0a0a1a,#1a1a2a)">
-        <span class="si-rarity rarity-${item.rarity}">${item.rarity==='epic'?'Épique':item.rarity==='rare'?'Rare':'Commun'}</span>
-        <span style="font-size:3.5rem">${item.emoji}</span>
-      </div>
-      <div class="si-info">
-        <div class="si-name">${item.name}</div>
-        <div class="si-desc">${item.desc}</div>
-        <div class="si-row">
-          <div class="si-price">🪙 ${item.price}</div>
-          <button class="buy-btn ${item.owned?'owned':''}"
-            onclick="buyItem(${item.id})"
-            ${item.owned?'disabled':''}>
-            ${item.owned?'✓ Possédé':'Acheter'}
-          </button>
-        </div>
-      </div>
-    </div>
-  `).join('');
-}
-
-function buyItem(id) {
-  const item = shopItems.find(i => i.id === id);
-  if (!item || item.owned) return;
-  if (coins < item.price) {
-    showNotif('❌', 'Pièces insuffisantes !'); return;
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.getElementById('navLinks').classList.remove('open');
   }
-  coins -= item.price;
-  item.owned = true;
-  renderShop();
-  showNotif('✅', '${item.name} acheté !');
-}
 
-// ====================================================
-// MODAL
-// ====================================================
-function openModal(id) {
-  const g = games.find(x => x.id === id);
-  if (!g) return;
-  document.getElementById('modalThumb').textContent = g.emoji;
-  document.getElementById('modalName').textContent = g.name;
-  document.getElementById('modalDesc').textContent = g.desc;
-  document.getElementById('modalOverlay').classList.add('open');
-}
+  function toggleMenu() {
+    document.getElementById('navLinks').classList.toggle('open');
+  }
 
-function closeModal() {
-  document.getElementById('modalOverlay').classList.remove('open');
-}
+  let slideIndex = 0;
+  const slides = document.querySelectorAll('.testimonial');
+  function goSlide(n) {
+    slideIndex = (n + slides.length) % slides.length;
+    document.getElementById('testimonialsTrack').style.transform = `translateX(-${slideIndex * 100}%)`;
+  }
+  function nextSlide() { goSlide(slideIndex + 1); }
+  function prevSlide() { goSlide(slideIndex - 1); }
+  setInterval(nextSlide, 6000);
 
-function startGame() {
-  closeModal();
-  showNotif('🎮', 'Lancement du jeu…');
-  setTimeout(() => showNotif('⚡', '+50 pièces gagnées !'), 2500);
-  coins += 50;
-  setTimeout(() => {
-    document.getElementById('coinsDisplay').textContent = coins.toLocaleString('fr-FR');
-    document.getElementById('shopCoins').textContent = coins.toLocaleString('fr-FR');
-  }, 2600);
-}
+  // Each product has a unique Unsplash image (curated search IDs for antique/moroccan items)
+  // Using Unsplash Source API with relevant keywords for each category
+  const products = [
+    // MOBILIER (unique items only)
+    {
+      id: 1,
+      name: 'Commode Zellige Sculptée',
+      era: 'XIXe siècle',
+      category: 'mobilier',
+      price: '18 500 MAD',
+      origin: 'Fès, Maroc',
+      desc: 'Bois de cèdre sculpté à la main, incrustations de zellige bleu de Fès. Tiroirs d\'origine, ferrures en laiton. Pièce unique certifiée.',
+      badge: 'Rare',
+      img: 'https://i.etsystatic.com/32696640/r/il/83043e/6122564868/il_340x270.6122564868_r41z.jpg'
+    },
+    {
+      id: 2,
+      name: 'Banquette Moucharabieh',
+      era: 'Début XXe s.',
+      category: 'mobilier',
+      price: '9 800 MAD',
+      origin: 'Meknès, Maroc',
+      desc: 'Structure bois de thuya, lattes tressées, coussin cuir tannée végétal. Travail artisanal de Meknès. Parfait état de conservation.',
+      badge: '',
+      img: 'https://image.invaluable.com/housePhotos/Tajan/74/629174/H0965-L156292127_original.jpg'
+    },
+    {
+      id: 3,
+      name: "Armoire Berbère de l'Atlas",
+      era: 'XVIIIe siècle',
+      category: 'mobilier',
+      price: '24 000 MAD',
+      origin: 'Haut-Atlas, Maroc',
+      desc: 'Peuplier massif, peintures tribales originales aux pigments naturels ocre et indigo. Serrure en fer forgé d\'époque. Authentique.',
+      badge: 'Exclusif',
+      img: 'https://a.1stdibscdn.com/moroccan-hand-crafted-painted-and-carved-berber-style-wardrobe-for-sale/f_8880/f_409964121723134918293/f_40996412_1723134920058_bg_processed.jpg?width=768'
+    },
+    {
+      id: 4,
+      name: 'Table Basse Marqueterie Thuya',
+      era: '1930',
+      category: 'mobilier',
+      price: '6 500 MAD',
+      origin: 'Essaouira, Maroc',
+      desc: "Essence de thuya d'Essaouira, marqueterie citronnier et ébène. Plateau vitré de protection. Artisanat d'exception Art Déco.",
+      badge: '',
+      img: 'https://www.idfdesign.fr/photos/tables-classiques-de-luxe/art-222-r-petite-tables-de-luxe-sculpte-a-la-main.jpg'
+    },
+    {
+      id: 5,
+      name: 'Bureau Moucharabieh Sculpté',
+      era: '1890',
+      category: 'mobilier',
+      price: '32 000 MAD',
+      origin: 'Fès, Maroc',
+      desc: "Cèdre de l'Atlas, panneau moucharabieh percé à la main, tiroirs à poignées laiton. Plateau cuir vert. Majestueux.",
+      badge: 'Coup de cœur',
+      img: 'https://bigoffice.ma/wp-content/uploads/2025/11/table-de-reunion-design-moucharabieh-MDF-1.png'
+    },
+    {
+      id: 6,
+      name: 'Coffre de Mariée Tafilalet',
+      era: 'XIXe siècle',
+      category: 'mobilier',
+      price: '12 000 MAD',
+      origin: 'Tafilalet, Maroc',
+      desc: 'Bois peint à la main, serrure en fer forgé, motifs géométriques berbères. Doublure tissu d\'origine. Très rare hors région.',
+      badge: 'Rare',
+      img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-uZC8wQw-96pTlF75Mgu6APMUYn4VqcWhJg&s'
+    },
+    {
+      id: 7,
+      name: 'Lit à Baldaquin Andalou',
+      era: 'XVIIIe siècle',
+      category: 'mobilier',
+      price: '45 000 MAD',
+      origin: 'Tétouan, Maroc',
+      desc: 'Cèdre massif, colonnes tournées, baldaquin soie brodée fils or. Héritage andalou-marocain unique. Certificat Ministère Culture.',
+      badge: 'Exclusif',
+      img: 'https://www.univers-ciel-de-lit.com/_i/175928/10889/2452/92/lit-baldaquin-adulte-rouge-renaissance.jpeg'
+    },
 
-document.getElementById('modalOverlay').addEventListener('click', function(e) {
-  if (e.target === this) closeModal();
-});
+    // CÉRAMIQUE (unique items only)
+    {
+      id: 8,
+      name: 'Vase Zellij Bleu de Fès',
+      era: 'XIXe siècle',
+      category: 'ceramique',
+      price: '4 200 MAD',
+      origin: 'Fès, Maroc',
+      desc: 'Poterie de Fès, émaux bleu cobalt et blanc laiteux, motifs géométriques entrelacés. Signé sous la base. Collection privée.',
+      badge: '',
+      img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzVrnzz8-oUWWKTBQqvnOZnDpY1msQdL3aSA&s'
+    },
+    {
+      id: 9,
+      name: 'Tajine Cérémoniel Gravé',
+      era: 'XVIIIe siècle',
+      category: 'ceramique',
+      price: '3 600 MAD',
+      origin: 'Salé, Maroc',
+      desc: 'Terre cuite rouge de Salé, gravures florales et végétales au tour. Couvercle en dôme original. Usage strictement décoratif.',
+      badge: 'Rare',
+      img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOkE7jpNR8ccZ2X94tXDxPMbZ90EHq9c3RaQ&s'
+    },
+    {
+      id: 10,
+      name: 'Fontaine Zellige Miniature',
+      era: '1900',
+      category: 'ceramique',
+      price: '7 500 MAD',
+      origin: 'Fès, Maroc',
+      desc: 'Fontaine de table en zellige multicolore sur structure cuivre argenté. Pompe mécanique d\'époque. Pièce exceptionnelle et unique.',
+      badge: 'Exclusif',
+      img: 'https://i.etsystatic.com/34444554/r/il/93ce8c/7782921703/il_fullxfull.7782921703_eecv.jpg'
+    },
+    {
+      id: 11,
+      name: 'Poterie Berbère Amazigh',
+      era: 'XIXe siècle',
+      category: 'ceramique',
+      price: '2 900 MAD',
+      origin: 'Tamegroute, Maroc',
+      desc: "Argile noire caractéristique de Tamegroute, décors géométriques berbères incisés à la main. Authenticité certifiée. Rare hors région.",
+      badge: '',
+      img: 'https://i.pinimg.com/474x/cc/5e/75/cc5e751021c8a722d4c4b615219709ae.jpg'
+    },
+    {
+      id: 12,
+      name: 'Amphore Tamegroute Noire',
+      era: '1870',
+      category: 'ceramique',
+      price: '8 400 MAD',
+      origin: 'Tamegroute, Maroc',
+      desc: "Argile noire caractéristique de Tamegroute, grande taille (68 cm), décors incisés profonds. Col à rebord. Pièce muséale.",
+      badge: 'Coup de cœur',
+      img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRD9lySqyWZh5ePoN3kmFbtIXOC9kbfPSY-qA&s'
+    },
+    {
+      id: 13,
+      name: 'Service à Thé Fassi Complet',
+      era: '1915',
+      category: 'ceramique',
+      price: '6 800 MAD',
+      origin: 'Fès, Maroc',
+      desc: 'Service 12 pièces en faïence de Fès, motifs arabesques bleu et blanc, état de collection. Théière, verres, plateau inclus.',
+      badge: '',
+      img: 'https://daradyafa.com/cdn/shop/files/SNGOLDSILVER33_1200x1200.webp?v=1713748420'
+    },
 
-// ====================================================
-// NOTIF
-// ====================================================
-let notifTimer;
-function showNotif(icon, text) {
-  clearTimeout(notifTimer);
-  document.getElementById('notifIcon').textContent = icon;
-  document.getElementById('notifText').textContent = text;
-  const el = document.getElementById('notif');
-  el.classList.add('show');
-  notifTimer = setTimeout(() => el.classList.remove('show'), 2800);
-}
+    // TABLEAUX (unique items)
+    {
+      id: 14,
+      name: 'Miniature Orientaliste',
+      era: '1885',
+      category: 'tableau',
+      price: '14 000 MAD',
+      origin: 'École de Paris',
+      desc: 'Gouache sur ivoire, scène de souk marocain animée. École orientaliste européenne. Cadre bois doré d\'époque. Signé et daté.',
+      badge: 'Signé',
+      img: 'https://a.1stdibscdn.com/exceptional-quality-miniature-painting-of-an-orientalist-turkish-dancer-1860-for-sale/f_73862/f_313923521668887044098/f_31392352_1668887044384_bg_processed.jpg?width=768'
+    },
+    {
+      id: 15,
+      name: 'Aquarelle Médina de Marrakech',
+      era: '1910',
+      category: 'tableau',
+      price: '8 800 MAD',
+      origin: 'Marrakech, Maroc',
+      desc: "Aquarelle sur papier Fabriano, vue sur la Koutoubia au coucher du soleil. Artiste anonyme. Très belle condition générale.",
+      badge: '',
+      img: 'https://cdng.europosters.eu/pod_public/1300/157509.jpg'
+    },
+    {
+      id: 16,
+      name: 'Calligraphie Arabe Encadrée',
+      era: 'XIXe siècle',
+      category: 'tableau',
+      price: '5 500 MAD',
+      origin: 'Fès, Maroc',
+      desc: "Encre de Chine sur papier de Samarcande, sourate coranique en coufique fleuri. Cadre bois doré d'époque. Pièce spirituelle rare.",
+      badge: 'Rare',
+      img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwvQheU5BbneHE1mdn2w-MTyreGEgKSo3Phg&s'
+    },
+    {
+      id: 17,
+      name: 'Huile sur Toile Souk de Fès',
+      era: '1895',
+      category: 'tableau',
+      price: '22 000 MAD',
+      origin: 'Fès, Maroc',
+      desc: "Huile sur toile marouflée, scène animée du souk El Attarine de Fès. Provenance collection d'État. Certificat d'authenticité.",
+      badge: 'Exclusif',
+      img: 'https://imgprivate2.artprice.com/get/classifieds/ebd0/53d1/4d55/15d5/d669/767f/4cad/6dc8/e161/01b7/1024/1024/Maurice-GUIRAUD-RIVIERE-Scene-de-souk-a-Fes-au-Mar-1699460282.jpg'
+    },
+    {
+      id: 18,
+      name: 'Portrait Femme Amazigh',
+      era: '1900',
+      category: 'tableau',
+      price: '16 500 MAD',
+      origin: 'Haut-Atlas, Maroc',
+      desc: "Pastel sur papier, portrait d'une femme berbère en parure traditionnelle complète. Signé J. Renard. Cadre acajou doré.",
+      badge: 'Coup de cœur',
+      img: 'https://urbanart.ma/8266-large_default/tableau-decoratif-femme-berbere.jpg'
+    },
 
-// ====================================================
-// INIT
-// ====================================================
-renderHomeGrid();
-renderFilters();
-renderAllGames();
-renderLb();
-renderShop();
+    // BIJOUX (unique items)
+    {
+      id: 19,
+      name: 'Collier Amazigh Argent',
+      era: 'XIXe siècle',
+      category: 'bijou',
+      price: '5 800 MAD',
+      origin: 'Atlas Central, Maroc',
+      desc: 'Argent massif niellé, pendeloques corail rouge et ambre naturel. Bijou de fiançailles traditionnel. Fermoir crochet d\'origine.',
+      badge: 'Coup de cœur',
+      img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSW-ncuPWm9Gi8b7CzdwrF9NpjqEnt3pbplyQ&s'
+    },
+    {
+      id: 20,
+      name: 'Fibule Double Tisfri',
+      era: 'XVIIIe siècle',
+      category: 'bijou',
+      price: '9 500 MAD',
+      origin: 'Souss, Maroc',
+      desc: 'Argent, corail, émail cloisonné. Paire complète avec chaîne de liaison d\'origine. Très rare en parfait état de conservation.',
+      badge: 'Rare',
+      img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/MAP_Paris_Fibules_04032012_1.jpg/250px-MAP_Paris_Fibules_04032012_1.jpg'
+    },
+    {
+      id: 21,
+      name: 'Bague Chevalière Fès',
+      era: '1870',
+      category: 'bijou',
+      price: '13 500 MAD',
+      origin: 'Souss-Massa, Maroc',
+      desc: 'Argent doré, pierres de corail et turquoise, pendeloques mobiles. Bijou de mariée du Souss. Pièce unique certifiée.',
+      badge: 'Exclusif',
+      img: 'https://graazie.com/wp-content/uploads/2025/01/Chevaliere-Rimbaud-ovale-en-argent-gravee-1U7A6658.jpg'
+    },
+    {
+      id: 22,
+      name: 'Ceinture Argent Repoussé',
+      era: 'XIXe siècle',
+      category: 'bijou',
+      price: '7 800 MAD',
+      origin: 'Marrakech, Maroc',
+      desc: 'Argent massif repoussé, plaques articulées, motifs floraux et géométriques. Ceinture de cérémonie. Fermoir en argent massif.',
+      badge: 'Rare',
+      img: 'https://i.etsystatic.com/7460334/r/il/44745d/3677957320/il_570xN.3677957320_8ex9.jpg'
+    },
+    {
+      id: 23,
+      name: 'Bracelet Manchette Tislit',
+      era: 'XVIIIe siècle',
+      category: 'bijou',
+      price: '6 200 MAD',
+      origin: 'Tiznit, Maroc',
+      desc: 'Argent massif gravé, ouverture à charnière, motifs amazighs géométriques. Format manchette rare. Provenance collection privée.',
+      badge: 'Coup de cœur',
+      img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmi8wAbwFavKEQXW75Z0gVD_pTS6FFAtKodw&s'
+    },
+
+    // HORLOGERIE (unique items)
+    {
+      id: 24,
+      name: 'Horloge de Mosquée Ottomane',
+      era: 'XIXe siècle',
+      category: 'horloge',
+      price: '28 000 MAD',
+      origin: 'Istanbul / Maroc',
+      desc: 'Boîtier laiton doré, cadran arabe et latin, mécanisme Westminster. Provenance mosquée historique. Pièce rarissime en état de marche.',
+      badge: 'Exclusif',
+      img: 'https://medias.gazette-drouot.com/prod/medias/mediatheque/88945.jpg'
+    },
+    {
+      id: 25,
+      name: 'Montre de Gousset Gravée',
+      era: '1895',
+      category: 'horloge',
+      price: '7 200 MAD',
+      origin: 'Suisse / Maroc',
+      desc: 'Boîtier argent niellé à décor arabesque, mouvement suisse 17 rubis. Parfaite marche assurée. Chaîne Albert d\'origine incluse.',
+      badge: 'Signé',
+      img: 'https://votre-horloge-murale.com/cdn/shop/files/montre-a-gousset-personnalise-2.jpg?v=1730882207'
+    },
+    {
+      id: 26,
+      name: 'Pendule de Table Moorish',
+      era: '1910',
+      category: 'horloge',
+      price: '11 500 MAD',
+      origin: 'France / Maroc',
+      desc: "Boîtier bronze doré à décor mauresque, carillon sonnant les quarts d'heure, socle marbre noir. Entretien récent.",
+      badge: '',
+      img: 'https://www.1001pendules.fr/pendules_images/produits/2195-1-1-_prd.jpg'
+    },
+    {
+      id: 27,
+      name: 'Montre de Poche Sultan',
+      era: '1870',
+      category: 'horloge',
+      price: '15 000 MAD',
+      origin: 'Genève / Palais Royal',
+      desc: 'Savonnette or 18 carats, cadran chiffres arabes dorés, mouvement Patek vintage. Provenance palais. Exceptionnel état.',
+      badge: 'Exclusif',
+      img: 'https://ma.jumia.is/unsafe/fit-in/680x680/filters:fill(white)/product/43/256966/1.jpg?0905'
+    },
+
+    // TEXTILES (unique items)
+    {
+      id: 28,
+      name: 'Tapis Berbère Moyen Atlas',
+      era: 'XIXe siècle',
+      category: 'textile',
+      price: '22 000 MAD',
+      origin: 'Moyen Atlas, Maroc',
+      desc: 'Laine nouée à la main, motifs losanges et croix amazighes, rouge et ivoire sur fond naturel. Authenticité certifiée par expert.',
+      badge: 'Rare',
+      img: 'https://cinumedpub.mmsh.fr/prosper-ricard_tapis/Planche-13.jpg'
+    },
+    {
+      id: 29,
+      name: 'Caftan de Cour Brodé',
+      era: '1880',
+      category: 'textile',
+      price: '18 500 MAD',
+      origin: 'Fès, Maroc',
+      desc: 'Velours grenat, broderies sfifa et maâlem dorées au fil passé, boutons dorés anciens. Habit de cérémonie de cour fassi.',
+      badge: 'Exclusif',
+      img: 'https://www.shutterstock.com/image-photo/elegant-moroccan-caftan-traditional-embroidery-600nw-2635542823.jpg'
+    },
+    {
+      id: 30,
+      name: 'Klim Haouz Antique',
+      era: 'XVIIIe siècle',
+      category: 'textile',
+      price: '35 000 MAD',
+      origin: 'Haouz, Maroc',
+      desc: 'Tapisserie plate laine et soie, motifs abstraits Haouz, colorants végétaux d\'origine. Conservation remarquable. Qualité muséale.',
+      badge: 'Coup de cœur',
+      img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiJe4duutXfvIhS2t10aKaAoby6NMgH50ZYg&s'
+    },
+    {
+      id: 31,
+      name: 'Ceinture Handira de Mariage',
+      era: 'XIXe siècle',
+      category: 'textile',
+      price: '6 800 MAD',
+      origin: 'Moyen Atlas, Maroc',
+      desc: 'Laine tissée main avec paillettes argent intégrées, handira de mariée berbère. Rarissime en état complet. Provenance familiale.',
+      badge: 'Rare',
+      img: 'https://www.casablancax.com/wp-content/uploads/2025/05/C254D2B8-EDA4-4041-A161-D8007EC51A1A.jpeg'
+    },
+
+    // BRONZES & CUIVRES (unique items)
+    {
+      id: 32,
+      name: 'Plateau Cuivre Gravé Tawriq',
+      era: 'XIXe siècle',
+      category: 'bronze',
+      price: '5 200 MAD',
+      origin: 'Meknès, Maroc',
+      desc: 'Cuivre battu et gravé, motifs arabesques et calligraphie, 80 cm de diamètre. Pied en bois sculpté inclus. Somptueux travail.',
+      badge: '',
+      img: 'https://m.media-amazon.com/images/I/81XZUUB40KS._AC_UF1000,1000_QL80_.jpg'
+    },
+    {
+      id: 33,
+      name: 'Mortier Bronze Apothicaire',
+      era: 'XVIIIe siècle',
+      category: 'bronze',
+      price: '7 500 MAD',
+      origin: 'Fès, Maroc',
+      desc: 'Bronze à patine ancienne vert-de-gris, gravures latines et arabes, pilon assorti. Provenance officine médicale historique. Rare.',
+      badge: 'Rare',
+      img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-i6dTpUL6kaayDboz_fZooKMoSwFaltmeGQ&s'
+    },
+    {
+      id: 34,
+      name: 'Encensoir Mosquée Argent Bronze',
+      era: '1860',
+      category: 'bronze',
+      price: '12 000 MAD',
+      origin: 'Marrakech, Maroc',
+      desc: "Encensoir cérémoniel, alliage argent-bronze, chaînes originales à 3 brins, décor arabesque d'époque. Usage religieux authentique.",
+      badge: 'Exclusif',
+      img: 'https://fesstore.ma/wp-content/uploads/2025/08/WhatsApp-Image-2025-08-06-a-21.37.35_9fef9528.jpg'
+    },
+
+    // ARMES DÉCORATIVES (unique items)
+    {
+      id: 35,
+      name: 'Koummya Argent Gravée',
+      era: 'XIXe siècle',
+      category: 'arme',
+      price: '8 900 MAD',
+      origin: 'Maroc',
+      desc: 'Poignard cérémoniel courbé, manche argent massif niellé, fourreau cuir et argent ciselé. Lame inactivée. Usage strictement décoratif.',
+      badge: 'Coup de cœur',
+      img: 'https://www.proantic.com/galerie/coridon/img/1704963-698b738c55fcc.jpg'
+    },
+    {
+      id: 36,
+      name: 'Sabre de Cérémonie Sultanien',
+      era: 'XVIIIe siècle',
+      category: 'arme',
+      price: '24 000 MAD',
+      origin: 'Palais Royal, Maroc',
+      desc: "Lame acier damas à motifs ondés, garde dorée filigranée, fourreau velours rouge et or. Héritage palatial. Usage décoratif exclusif.",
+      badge: 'Exclusif',
+      img: 'https://balp-france.fr/img/p/8/6/6/866.jpg'
+    },
+  ];
+
+  function renderProducts(category) {
+    const grid = document.getElementById('productsGrid');
+    const filtered = category === 'all' ? products : products.filter(p => p.category === category);
+    grid.innerHTML = filtered.map(p => `
+      <div class="product-card" data-id="${p.id}">
+        <div class="product-img img-loading">
+          <img
+            src="${p.img}"
+            alt="${p.name}"
+            loading="lazy"
+            onload="this.parentElement.classList.remove('img-loading')"
+            onerror="this.style.display='none'; this.parentElement.classList.remove('img-loading'); this.parentElement.innerHTML += '<div class=\\'product-img-fallback\\'>🏺</div>${p.badge ? '<span class="product-badge">' + p.badge + '</span>' : ''}';"
+          />
+          ${p.badge ? `<span class="product-badge">${p.badge}</span>` : ''}
+        </div>
+        <div class="product-info">
+          <div class="product-era">${p.era}</div>
+          <div class="product-name">${p.name}</div>
+          <div class="product-origin">📍 ${p.origin}</div>
+          <div class="product-desc">${p.desc}</div>
+          <div class="product-footer">
+            <div class="product-price">${p.price}</div>
+            <button class="add-cart-btn" onclick="addToCart('${p.name}')">+ Panier</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+  renderProducts('all');
+
+  function filterProducts(cat, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderProducts(cat);
+  }
+
+  function addToCart(name) {
+    const t = document.getElementById('toast');
+    t.textContent = `✓ "${name}" ajouté au panier !`;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  // Gallery uses same products as a curated selection
+  const galleryItems = [
+    { img: 'https://i.etsystatic.com/32696640/r/il/83043e/6122564868/il_340x270.6122564868_r41z.jpg', title: 'Commode Zellige Sculptée', desc: 'Bois de cèdre, incrustations zellige, XIXe siècle, Fès' },
+    { img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSW-ncuPWm9Gi8b7CzdwrF9NpjqEnt3pbplyQ&s', title: 'Collier Amazigh Argent', desc: 'Argent niellé et corail rouge, Atlas Central, XIXe s.' },
+    { img: 'https://medias.gazette-drouot.com/prod/medias/mediatheque/88945.jpg', title: 'Horloge de Mosquée Ottomane', desc: 'Laiton doré, cadran arabe, mécanisme Westminster, XIXe s.' },
+    { img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzVrnzz8-oUWWKTBQqvnOZnDpY1msQdL3aSA&s', title: 'Vase Zellij Bleu de Fès', desc: 'Poterie émaillée XIXe siècle, manufacture de Fès' },
+    { img: 'https://a.1stdibscdn.com/exceptional-quality-miniature-painting-of-an-orientalist-turkish-dancer-1860-for-sale/f_73862/f_313923521668887044098/f_31392352_1668887044384_bg_processed.jpg?width=768', title: 'Miniature Orientaliste', desc: 'Gouache sur ivoire, scène de souk, École Paris, 1885' },
+    { img: 'https://cinumedpub.mmsh.fr/prosper-ricard_tapis/Planche-13.jpg', title: 'Tapis Berbère Moyen Atlas', desc: 'Laine nouée, motifs amazighs, rouge et ivoire, XIXe s.' },
+    { img: 'https://www.idfdesign.fr/photos/tables-classiques-de-luxe/art-222-r-petite-tables-de-luxe-sculpte-a-la-main.jpg', title: 'Table Marqueterie Thuya', desc: "Bois de thuya d'Essaouira, citronnier et ébène, 1930" },
+    { img: 'https://www.shutterstock.com/image-photo/elegant-moroccan-caftan-traditional-embroidery-600nw-2635542823.jpg', title: 'Caftan de Cour Brodé', desc: 'Velours grenat, broderies dorées sfifa, Fès, 1880' },
+    { img: 'https://ma.jumia.is/unsafe/fit-in/680x680/filters:fill(white)/product/43/256966/1.jpg?0905', title: 'Montre de Gousset Gravée', desc: 'Argent niellé arabesque, mouvement suisse 17 rubis, 1895' },
+    { img: 'https://imgprivate2.artprice.com/get/classifieds/ebd0/53d1/4d55/15d5/d669/767f/4cad/6dc8/e161/01b7/1024/1024/Maurice-GUIRAUD-RIVIERE-Scene-de-souk-a-Fes-au-Mar-1699460282.jpg', title: 'Huile sur Toile Souk de Fès', desc: 'Scène animée souk El Attarine, collection État, 1895' },
+    { img: 'https://a.1stdibscdn.com/moroccan-hand-crafted-painted-and-carved-berber-style-wardrobe-for-sale/f_8880/f_409964121723134918293/f_40996412_1723134920058_bg_processed.jpg?width=768', title: "Armoire Berbère de l'Atlas", desc: "Peuplier massif, peintures tribales, pigments naturels, XVIIIe s." },
+  ];
+
+  function renderGallery() {
+    const grid = document.getElementById('galleryGrid');
+    grid.innerHTML = galleryItems.map((item, i) => `
+      <div class="gallery-item" onclick="openLightbox(${i})">
+        <img src="${item.img}" alt="${item.title}" loading="lazy" />
+        <div class="gallery-overlay">
+          <h3>${item.title}</h3>
+          <p>${item.desc}</p>
+        </div>
+      </div>
+    `).join('');
+  }
+  renderGallery();
+
+  function openLightbox(i) {
+    const item = galleryItems[i];
+    document.getElementById('lightboxImg').innerHTML = `<img src="${item.img}" alt="${item.title}" style="width:100%;height:100%;object-fit:cover;" />`;
+    document.getElementById('lightboxCaption').textContent = item.title + ' — ' + item.desc;
+    document.getElementById('lightbox').classList.add('open');
+  }
+  function closeLightbox(e) {
+    if (!e || e.target === document.getElementById('lightbox') || e.target.classList.contains('lightbox-close')) {
+      document.getElementById('lightbox').classList.remove('open');
+    }
+  }
+
+  function submitForm() {
+    const prenom = document.getElementById('fPrenom').value.trim();
+    const email  = document.getElementById('fEmail').value.trim();
+    const sujet  = document.getElementById('fSujet').value;
+    const msg    = document.getElementById('fMessage').value.trim();
+    if (!prenom || !email || !sujet || !msg) {
+      alert('Veuillez remplir tous les champs obligatoires.');
+      return;
+    }
+    document.getElementById('formMsg').classList.add('show');
+    ['fPrenom','fNom','fEmail','fMessage'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('fSujet').selectedIndex = 0;
+  }
 </script>
 </body>
 </html>
