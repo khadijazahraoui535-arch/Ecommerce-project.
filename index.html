@@ -545,7 +545,9 @@
     <div class="about-visual" style="position:relative;">
       <div class="big-year">1887</div>
       <div class="icon-stack">
-        <span>🏺</span>
+        <span>
+          <img src="https://images.pexels.com/photos/14425936/pexels-photo-14425936.jpeg?cs=srgb&dl=pexels-anna-morgan-75707674-14425936.jpg&fm=jpg&_gl=1*mlshwr*_ga*ODI4NDEyOTAzLjE3Nzc0NzgyMTA.*_ga_8JE65Q40S6*czE3Nzc0ODE4ODAkbzIkZzEkdDE3Nzc0ODIxNDMkajU5JGwwJGgw" alt="photo de notre histoire"
+        </span>
         <p>« Chaque objet porte<br>l'âme de son époque. »</p>
       </div>
     </div>
@@ -650,16 +652,16 @@
       <div class="form-row">
         <div class="form-group">
           <label>Prénom</label>
-          <input type="text" id="fPrenom" placeholder="Mohammed" />
+          <input type="text" id="fPrenom" placeholder="Mohammed" pattern="[A-Za-zÀ-ÿ\s]+" title="Uniquement des lettres alphabétiques" required />
         </div>
         <div class="form-group">
           <label>Nom</label>
-          <input type="text" id="fNom" placeholder="Alaoui" />
+          <input type="text" id="fNom" placeholder="Alaoui" pattern="[A-Za-zÀ-ÿ\s]+" title="Uniquement des lettres alphabétiques" required  />
         </div>
       </div>
       <div class="form-group">
         <label>Email</label>
-        <input type="email" id="fEmail" placeholder="votre@email.com" />
+        <input type="email" id="fEmail" placeholder="votre@email.com" pattern="^(?=.*@)(?=.*[0-9]).*$" title="L'email doit contenir un '@' et au moins un chiffre" required />
       </div>
       <div class="form-group">
         <label>Ville</label>
@@ -690,7 +692,7 @@
       </div>
       <div class="form-group">
         <label>Message</label>
-        <textarea id="fMessage" placeholder="Décrivez votre demande..."></textarea>
+        <textarea id="fMessage" placeholder="Décrivez votre demande..." ></textarea>
       </div>
       <button class="btn" style="width:100%;" onclick="submitForm()">Envoyer le Message</button>
       <div class="form-msg" id="formMsg">✓ Votre message a bien été envoyé ! Nous vous répondrons sous 48h.</div>
