@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VictoryLand — Univers de Jeux</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #12121a;
+    --bg3: #1a1a26;
+    --accent: #7c5cfc;
+    --accent2: #fc5c7d;
+    --accent3: #5cf0b4;
+    --gold: #f5c542;
+    --text: #e8e8f0;
+    --text2: #8888aa;
+    --border: rgba(124,92,252,0.2);
+    --card: rgba(255,255,255,0.04);
+    --card-hover: rgba(255,255,255,0.08);
+    --glow: 0 0 30px rgba(124,92,252,0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* PAGES */
+  .page { display: none; min-height: 100vh; }
+  .page.active { display: block; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 2.5rem;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.6rem; font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    cursor: pointer; letter-spacing: -0.02em;
+  }
+
+  .nav-links { display: flex; gap: 0.25rem; }
+
+  .nav-link {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem; font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    border: none; background: transparent;
+    color: var(--text2); cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.01em;
+  }
+
+  .nav-link:hover { color: var(--text); background: var(--card); }
+  .nav-link.active { color: var(--accent); background: rgba(124,92,252,0.12); }
+
+  .nav-right { display: flex; align-items: center; gap: 1rem; }
+
+  .coins-badge {
+    display: flex; align-items: center; gap: 0.4rem;
+    background: rgba(245,197,66,0.1);
+    border: 1px solid rgba(245,197,66,0.25);
+    padding: 0.35rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.85rem; font-weight: 500;
+    color: var(--gold);
+  }
+
+  .coin-dot { width: 10px; height: 10px; background: var(--gold); border-radius: 50%; }
+
+  .avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; font-weight: 700; cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .avatar:hover { border-color: var(--accent); }
+
+  /* ===================== PAGE ACCUEIL ===================== */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 8rem 2.5rem 4rem;
+    position: relative; overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 70% 40%, rgba(124,92,252,0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 20% 70%, rgba(252,92,125,0.08) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-size: 0.75rem; font-weight: 500; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--accent);
+    background: rgba(124,92,252,0.1);
+    border: 1px solid rgba(124,92,252,0.3);
+    padding: 0.4rem 1rem; border-radius: 999px;
+    width: fit-content; margin-bottom: 1.5rem;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .tag-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent3); animation: pulse 2s infinite; }
+
+  @keyframes pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.5; transform:scale(1.4); } }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  @keyframes float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-8px); } }
+
+  .hero-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.8rem, 6vw, 5.5rem);
+    font-weight: 800; line-height: 1.05;
+    letter-spacing: -0.04em;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.6s 0.1s ease both;
+    max-width: 700px;
+  }
+
+  .gradient-word {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+
+  .hero-sub {
+    font-size: 1.1rem; color: var(--text2); line-height: 1.7;
+    max-width: 480px; margin-bottom: 2.5rem;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .hero-cta { display: flex; gap: 1rem; animation: fadeUp 0.6s 0.3s ease both; flex-wrap: wrap; }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #6040e0);
+    color: #fff; border: none; padding: 0.85rem 2rem;
+    border-radius: 12px; font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem; font-weight: 500;
+    cursor: pointer; transition: all 0.2s;
+    box-shadow: 0 8px 32px rgba(124,92,252,0.35);
+    letter-spacing: 0.01em;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(124,92,252,0.5); }
+
+  .btn-secondary {
+    background: var(--card); color: var(--text);
+    border: 1px solid var(--border); padding: 0.85rem 2rem;
+    border-radius: 12px; font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem; font-weight: 500;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn-secondary:hover { background: var(--card-hover); border-color: rgba(124,92,252,0.4); }
+
+  .hero-stats {
+    display: flex; gap: 3rem; margin-top: 4rem;
+    animation: fadeUp 0.6s 0.4s ease both;
+  }
+
+  .stat-item { }
+  .stat-val {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem; font-weight: 800; color: var(--text);
+    letter-spacing: -0.03em;
+  }
+  .stat-label { font-size: 0.8rem; color: var(--text2); margin-top: 0.2rem; text-transform: uppercase; letter-spacing: 0.08em; }
+
+  .hero-cards {
+    position: absolute; right: 5%; top: 50%; transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 1rem;
+    animation: float 4s ease-in-out infinite;
+  }
+
+  .floating-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.2rem 1.5rem;
+    width: 260px;
+    backdrop-filter: blur(8px);
+  }
+
+  .fc-top { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+  .fc-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+  .fc-icon.purple { background: rgba(124,92,252,0.2); }
+  .fc-icon.pink { background: rgba(252,92,125,0.2); }
+  .fc-name { font-weight: 500; font-size: 0.9rem; }
+  .fc-genre { font-size: 0.75rem; color: var(--text2); }
+  .fc-bar { height: 5px; background: rgba(255,255,255,0.07); border-radius: 999px; overflow: hidden; }
+  .fc-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+
+  /* Featured Section */
+  .section { padding: 5rem 2.5rem; }
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+  .section-title { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 700; }
+  .section-link { font-size: 0.85rem; color: var(--accent); cursor: pointer; transition: opacity 0.2s; }
+  .section-link:hover { opacity: 0.7; }
+
+  .game-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.25rem; }
+
+  .game-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden;
+    cursor: pointer; transition: all 0.25s;
+    position: relative;
+  }
+  .game-card:hover { transform: translateY(-4px); border-color: rgba(124,92,252,0.4); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+
+  .game-thumb {
+    height: 150px; display: flex; align-items: center; justify-content: center;
+    font-size: 3.5rem;
+    position: relative; overflow: hidden;
+  }
+  .thumb-bg { position: absolute; inset: 0; opacity: 0.4; }
+
+  .game-info { padding: 1rem; }
+  .game-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 0.35rem; }
+  .game-meta { display: flex; align-items: center; justify-content: space-between; }
+  .game-genre { font-size: 0.75rem; color: var(--text2); background: var(--bg3); padding: 0.2rem 0.6rem; border-radius: 999px; }
+  .game-stars { font-size: 0.8rem; color: var(--gold); }
+
+  .badge-new {
+    position: absolute; top: 10px; right: 10px;
+    background: var(--accent); color: #fff;
+    font-size: 0.65rem; font-weight: 700;
+    padding: 0.2rem 0.5rem; border-radius: 999px;
+    letter-spacing: 0.05em; text-transform: uppercase;
+  }
+
+  /* ===================== PAGE JEUX ===================== */
+  .page-hero {
+    padding: 8rem 2.5rem 3rem;
+    background: linear-gradient(180deg, rgba(124,92,252,0.06) 0%, transparent 100%);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .page-hero-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.5rem; font-weight: 800;
+    letter-spacing: -0.04em;
+    margin-bottom: 0.5rem;
+  }
+  .page-hero-sub { color: var(--text2); font-size: 0.95rem; }
+
+  .filters {
+    display: flex; gap: 0.5rem; flex-wrap: wrap;
+    padding: 1.5rem 2.5rem; border-bottom: 1px solid var(--border);
+  }
+
+  .filter-btn {
+    padding: 0.45rem 1rem; border-radius: 999px;
+    border: 1px solid var(--border); background: transparent;
+    color: var(--text2); font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem; font-weight: 500;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .filter-btn:hover { color: var(--text); border-color: rgba(124,92,252,0.4); }
+  .filter-btn.active { background: rgba(124,92,252,0.15); border-color: var(--accent); color: var(--accent); }
+
+  .games-grid {
+    padding: 2rem 2.5rem;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.25rem;
+  }
+
+  .game-card-lg {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden;
+    cursor: pointer; transition: all 0.25s;
+    animation: fadeIn 0.4s ease both;
+  }
+  .game-card-lg:hover { transform: translateY(-4px); border-color: rgba(124,92,252,0.5); box-shadow: 0 16px 48px rgba(0,0,0,0.5); }
+
+  .gcl-thumb { height: 130px; display: flex; align-items: center; justify-content: center; font-size: 3rem; position: relative; overflow:hidden; }
+  .gcl-info { padding: 1rem; }
+  .gcl-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.95rem; margin-bottom: 0.4rem; }
+  .gcl-row { display: flex; align-items: center; justify-content: space-between; }
+  .gcl-genre { font-size: 0.72rem; color: var(--text2); background: var(--bg3); padding: 0.18rem 0.55rem; border-radius: 999px; }
+  .gcl-players { font-size: 0.72rem; color: var(--accent3); }
+  .gcl-bar { height: 4px; background: rgba(255,255,255,0.06); border-radius: 999px; margin-top: 0.75rem; overflow: hidden; }
+  .gcl-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+
+  /* ===================== PAGE CLASSEMENT ===================== */
+  .leaderboard { padding: 8rem 2.5rem 4rem; }
+  .lb-header { margin-bottom: 2rem; }
+  .lb-title { font-family: 'Syne', sans-serif; font-size: 2.5rem; font-weight: 800; letter-spacing: -0.04em; margin-bottom: 0.4rem; }
+  .lb-sub { color: var(--text2); }
+
+  .lb-tabs { display: flex; gap: 0.5rem; margin-bottom: 2rem; }
+  .lb-tab {
+    padding: 0.5rem 1.2rem; border-radius: 999px;
+    border: 1px solid var(--border); background: transparent;
+    color: var(--text2); font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem; cursor: pointer; transition: all 0.2s;
+  }
+  .lb-tab:hover { color: var(--text); }
+  .lb-tab.active { background: rgba(124,92,252,0.15); border-color: var(--accent); color: var(--accent); }
+
+  .lb-list { display: flex; flex-direction: column; gap: 0.75rem; max-width: 720px; }
+
+  .lb-item {
+    display: flex; align-items: center; gap: 1.25rem;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 14px; padding: 1rem 1.25rem;
+    transition: all 0.2s; cursor: pointer;
+  }
+  .lb-item:hover { border-color: rgba(124,92,252,0.3); background: var(--bg3); }
+  .lb-item.top1 { border-color: rgba(245,197,66,0.4); background: rgba(245,197,66,0.05); }
+  .lb-item.top2 { border-color: rgba(192,192,192,0.3); background: rgba(192,192,192,0.04); }
+  .lb-item.top3 { border-color: rgba(205,127,50,0.3); background: rgba(205,127,50,0.04); }
+
+  .lb-rank { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800; min-width: 36px; text-align: center; }
+  .lb-rank.r1 { color: var(--gold); }
+  .lb-rank.r2 { color: #C0C0C0; }
+  .lb-rank.r3 { color: #CD7F32; }
+
+  .lb-avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; font-weight: 700;
+  }
+
+  .lb-info { flex: 1; }
+  .lb-name { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.2rem; }
+  .lb-game { font-size: 0.77rem; color: var(--text2); }
+
+  .lb-score { text-align: right; }
+  .lb-pts { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 800; color: var(--accent); }
+  .lb-level { font-size: 0.75rem; color: var(--text2); margin-top: 0.15rem; }
+
+  /* ===================== PAGE BOUTIQUE ===================== */
+  .shop { padding: 8rem 2.5rem 4rem; }
+  .shop-header { margin-bottom: 2rem; }
+  .shop-title { font-family: 'Syne', sans-serif; font-size: 2.5rem; font-weight: 800; letter-spacing: -0.04em; margin-bottom: 0.4rem; }
+  .shop-sub { color: var(--text2); }
+
+  .shop-balance {
+    display: inline-flex; align-items: center; gap: 0.75rem;
+    background: rgba(245,197,66,0.08); border: 1px solid rgba(245,197,66,0.25);
+    border-radius: 14px; padding: 0.85rem 1.5rem; margin-bottom: 2.5rem;
+  }
+  .balance-label { font-size: 0.8rem; color: var(--text2); text-transform: uppercase; letter-spacing: 0.08em; }
+  .balance-val { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; color: var(--gold); }
+  .balance-icon { font-size: 1.5rem; }
+
+  .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.25rem; }
+
+  .shop-item {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden;
+    transition: all 0.25s; cursor: pointer;
+  }
+  .shop-item:hover { transform: translateY(-4px); border-color: rgba(124,92,252,0.4); box-shadow: 0 16px 48px rgba(0,0,0,0.4); }
+
+  .si-thumb { height: 140px; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; position: relative; }
+  .si-info { padding: 1.1rem; }
+  .si-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 0.3rem; }
+  .si-desc { font-size: 0.78rem; color: var(--text2); line-height: 1.5; margin-bottom: 1rem; }
+  .si-row { display: flex; align-items: center; justify-content: space-between; }
+  .si-price { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; color: var(--gold); display: flex; align-items: center; gap: 0.3rem; }
+
+  .buy-btn {
+    background: linear-gradient(135deg, var(--accent), #6040e0);
+    color: #fff; border: none; padding: 0.45rem 1rem;
+    border-radius: 8px; font-size: 0.8rem; font-weight: 500;
+    cursor: pointer; transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .buy-btn:hover { transform: scale(1.05); }
+  .buy-btn:disabled { opacity: 0.4; cursor: default; }
+  .buy-btn.owned { background: var(--accent3); color: #000; }
+
+  .si-rarity {
+    position: absolute; top: 10px; left: 10px;
+    font-size: 0.65rem; font-weight: 700; padding: 0.2rem 0.55rem;
+    border-radius: 999px; text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .rarity-epic { background: rgba(124,92,252,0.3); color: var(--accent); border: 1px solid rgba(124,92,252,0.5); }
+  .rarity-rare { background: rgba(92,240,180,0.2); color: var(--accent3); border: 1px solid rgba(92,240,180,0.4); }
+  .rarity-common { background: rgba(136,136,170,0.2); color: var(--text2); border: 1px solid rgba(136,136,170,0.3); }
+
+  /* ===================== PAGE PROFIL ===================== */
+  .profil { padding: 8rem 2.5rem 4rem; }
+
+  .profil-top {
+    display: flex; align-items: center; gap: 2rem;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 20px; padding: 2rem;
+    margin-bottom: 2rem;
+    position: relative; overflow: hidden;
+  }
+  .profil-top::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
+  }
+
+  .profil-avatar {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; font-weight: 800;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 4px rgba(124,92,252,0.2);
+  }
+
+  .profil-info { flex: 1; }
+  .profil-name { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; margin-bottom: 0.25rem; }
+  .profil-handle { color: var(--text2); font-size: 0.9rem; margin-bottom: 0.75rem; }
+  .profil-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .p-badge {
+    font-size: 0.72rem; font-weight: 600; padding: 0.2rem 0.6rem;
+    border-radius: 999px; text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .pb-purple { background: rgba(124,92,252,0.2); color: var(--accent); border: 1px solid rgba(124,92,252,0.4); }
+  .pb-green { background: rgba(92,240,180,0.15); color: var(--accent3); border: 1px solid rgba(92,240,180,0.3); }
+  .pb-gold { background: rgba(245,197,66,0.15); color: var(--gold); border: 1px solid rgba(245,197,66,0.3); }
+
+  .profil-stats { display: flex; gap: 1.5rem; }
+  .ps-item { text-align: center; }
+  .ps-val { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; }
+  .ps-key { font-size: 0.72rem; color: var(--text2); text-transform: uppercase; letter-spacing: 0.07em; margin-top: 0.15rem; }
+
+  .profil-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+
+  .p-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; }
+  .p-card-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; }
+  .p-card-icon { font-size: 1rem; }
+
+  .activity-list { display: flex; flex-direction: column; gap: 0.75rem; }
+  .activity-item { display: flex; align-items: center; gap: 0.75rem; }
+  .act-icon { width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; flex-shrink: 0; }
+  .act-icon.purple { background: rgba(124,92,252,0.15); }
+  .act-icon.pink { background: rgba(252,92,125,0.15); }
+  .act-icon.green { background: rgba(92,240,180,0.12); }
+  .act-desc { flex: 1; font-size: 0.83rem; }
+  .act-time { font-size: 0.72rem; color: var(--text2); }
+
+  .skills-list { display: flex; flex-direction: column; gap: 1rem; }
+  .skill-item { }
+  .skill-header { display: flex; justify-content: space-between; font-size: 0.83rem; margin-bottom: 0.4rem; }
+  .skill-pct { color: var(--accent); font-weight: 600; }
+  .skill-bar { height: 6px; background: rgba(255,255,255,0.07); border-radius: 999px; overflow: hidden; }
+  .skill-fill { height: 100%; border-radius: 999px; }
+  .sf-purple { background: linear-gradient(90deg, var(--accent), #a080ff); }
+  .sf-pink { background: linear-gradient(90deg, var(--accent2), #ff80a0); }
+  .sf-green { background: linear-gradient(90deg, var(--accent3), #40e090); }
+  .sf-gold { background: linear-gradient(90deg, var(--gold), #ffd080); }
+
+  /* GAME MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(6px); z-index: 200;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.25s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 24px; padding: 2rem; width: 90%; max-width: 480px;
+    transform: translateY(20px); transition: transform 0.25s;
+    position: relative;
+  }
+  .modal-overlay.open .modal { transform: translateY(0); }
+
+  .modal-close {
+    position: absolute; top: 1rem; right: 1rem;
+    background: var(--card); border: none; color: var(--text2);
+    width: 32px; height: 32px; border-radius: 50%;
+    cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .modal-close:hover { background: var(--card-hover); color: var(--text); }
+
+  .modal-thumb { font-size: 5rem; text-align: center; margin-bottom: 1rem; }
+  .modal-name { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem; }
+  .modal-desc { color: var(--text2); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.5rem; }
+  .modal-play {
+    width: 100%; background: linear-gradient(135deg, var(--accent), #6040e0);
+    color: #fff; border: none; padding: 1rem;
+    border-radius: 12px; font-size: 1rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif;
+  }
+  .modal-play:hover { transform: scale(1.02); box-shadow: 0 8px 32px rgba(124,92,252,0.4); }
+
+  /* NOTIF */
+  .notif {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 300;
+    background: var(--bg2); border: 1px solid var(--accent);
+    border-radius: 12px; padding: 1rem 1.5rem;
+    display: flex; align-items: center; gap: 0.75rem;
+    transform: translateY(100px); opacity: 0;
+    transition: all 0.35s; pointer-events: none;
+    box-shadow: var(--glow);
+  }
+  .notif.show { transform: translateY(0); opacity: 1; }
+  .notif-icon { font-size: 1.2rem; }
+  .notif-text { font-size: 0.9rem; font-weight: 500; }
+
+  /* PROGRESS BAR NAV */
+  .progress-bar {
+    position: fixed; top: 0; left: 0; height: 2px; z-index: 200;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width 0.3s ease; width: 0%;
+  }
+
+  @media (max-width: 768px) {
+    .hero-cards { display: none; }
+    .profil-grid { grid-template-columns: 1fr; }
+    nav { padding: 1rem 1.25rem; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<nav>
+  <div class="nav-logo" onclick="goPage('accueil')">VictoryLand</div>
+  <div class="nav-links">
+    <button class="nav-link active" data-page="accueil" onclick="goPage('accueil')">Accueil</button>
+    <button class="nav-link" data-page="jeux" onclick="goPage('jeux')">Jeux</button>
+    <button class="nav-link" data-page="classement" onclick="goPage('classement')">Classement</button>
+    <button class="nav-link" data-page="boutique" onclick="goPage('boutique')">Boutique</button>
+    <button class="nav-link" data-page="profil" onclick="goPage('profil')">Profil</button>
+  </div>
+  <div class="nav-right">
+    <div class="coins-badge"><div class="coin-dot"></div><span id="coinsDisplay">1 250</span></div>
+    <div class="avatar" onclick="goPage('profil')">AKB</div>
+  </div>
+</nav>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-thumb" id="modalThumb">🎮</div>
+    <div class="modal-name" id="modalName">Jeu</div>
+    <div class="modal-desc" id="modalDesc">Description du jeu</div>
+    <button class="modal-play" onclick="startGame()">▶️  Jouer maintenant</button>
+  </div>
+</div>
+
+<div class="notif" id="notif">
+  <span class="notif-icon" id="notifIcon">✅</span>
+  <span class="notif-text" id="notifText">Action effectuée</span>
+</div>
+
+<div class="page active" id="page-accueil">
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-tag"><div class="tag-dot"></div>Plateforme de jeux en ligne</div>
+    <h1 class="hero-title">Explore. Collabore.<br><span class="gradient-word">Découvre.</span></h1>
+    <p class="hero-sub">Des centaines de jeux, des tournois en direct et une communauté de millions de joueurs qui t'attendent.</p>
+    <div class="hero-cta">
+      <button class="btn-primary" onclick="goPage('jeux')">Explorer les jeux</button>
+      <button class="btn-secondary" onclick="goPage('classement')">Voir le classement</button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item"><div class="stat-val">248K</div><div class="stat-label">Joueurs actifs</div></div>
+      <div class="stat-item"><div class="stat-val">500+</div><div class="stat-label">Jeux disponibles</div></div>
+      <div class="stat-item"><div class="stat-val">12M</div><div class="stat-label">Parties jouées</div></div>
+    </div>
+    <div class="hero-cards">
+      <div class="floating-card">
+        <div class="fc-top">
+          <div class="fc-icon purple">🌌</div>
+          <div><div class="fc-name">NovaStar</div><div class="fc-genre">Action · Sci-Fi</div></div>
+        </div>
+        <div class="fc-bar"><div class="fc-fill" style="width:78%"></div></div>
+      </div>
+      <div class="floating-card">
+        <div class="fc-top">
+          <div class="fc-icon pink">🐉</div>
+          <div><div class="fc-name">Dragon</div><div class="fc-genre">RPG · Fantasy</div></div>
+        </div>
+        <div class="fc-bar"><div class="fc-fill" style="width:62%"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-header">
+      <div class="section-title">🔥 Jeux populaires</div>
+      <span class="section-link" onclick="goPage('jeux')">Voir tout →</span>
+    </div>
+    <div class="game-grid" id="homeGameGrid"></div>
+  </section>
+</div>
+
+<div class="page" id="page-jeux">
+  <div class="page-hero">
+    <h1 class="page-hero-title">🎮 Bibliothèque de jeux</h1>
+    <p class="page-hero-sub">Découvre tous les jeux disponibles sur VictoryLand</p>
+  </div>
+  <div class="filters" id="filtersBar"></div>
+  <div class="games-grid" id="allGamesGrid"></div>
+</div>
+
+<div class="page" id="page-classement">
+  <div class="leaderboard">
+    <div class="lb-header">
+      <h1 class="lb-title">🏆 Classement</h1>
+      <p class="lb-sub">Les meilleurs joueurs de la semaine</p>
+    </div>
+    <div class="lb-tabs">
+      <button class="lb-tab active" onclick="setLbTab(this,'global')">Global</button>
+      <button class="lb-tab" onclick="setLbTab(this,'amis')">Amis</button>
+    </div>
+    <div class="lb-list" id="lbList"></div>
+  </div>
+</div>
+
+<div class="page" id="page-boutique">
+  <div class="shop">
+    <div class="shop-header">
+      <h1 class="shop-title">🛒 Boutique</h1>
+      <p class="shop-sub">Utilise tes pièces pour débloquer des objets exclusifs</p>
+    </div>
+    <div class="shop-balance">
+      <span class="balance-icon">🪙</span>
+      <div>
+        <div class="balance-label">Solde</div>
+        <div class="balance-val" id="shopCoins">1 250</div>
+      </div>
+    </div>
+    <div class="shop-grid" id="shopGrid"></div>
+  </div>
+</div>
+
+<div class="page" id="page-profil">
+  <div class="profil">
+    <div class="profil-top">
+      <div class="profil-avatar">AKB</div>
+      <div class="profil-info">
+        <div class="profil-name">AKBprime</div>
+        <div class="profil-handle">@AKB · Membre depuis 2023</div>
+        <div class="profil-badges">
+          <span class="p-badge pb-purple">⚡ Élite</span>
+          <span class="p-badge pb-green">🌟 Top 100</span>
+          <span class="p-badge pb-gold">🏆 Champion</span>
+        </div>
+      </div>
+      <div class="profil-stats">
+        <div class="ps-item"><div class="ps-val">847</div><div class="ps-key">Victoires</div></div>
+        <div class="ps-item"><div class="ps-val">42</div><div class="ps-key">Niveau</div></div>
+        <div class="ps-item"><div class="ps-val">1250</div><div class="ps-key">Pièces</div></div>
+      </div>
+    </div>
+    <div class="profil-grid">
+      <div class="p-card">
+        <div class="p-card-title"><span class="p-card-icon">⚡</span> Activité récente</div>
+        <div class="activity-list">
+          <div class="activity-item">
+            <div class="act-icon purple">🌌</div>
+            <div class="act-desc">Victoire sur <b>NovaStar</b> — Score: 12,450</div>
+            <div class="act-time">2h</div>
+          </div>
+          <div class="activity-item">
+            <div class="act-icon pink">🐉</div>
+            <div class="act-desc">Niveau 15 atteint sur <b>Dragon</b></div>
+            <div class="act-time">5h</div>
+          </div>
+          <div class="activity-item">
+            <div class="act-icon green">🧩</div>
+            <div class="act-desc">Achat: <b>Skin Galactique</b> (–500 pièces)</div>
+            <div class="act-time">1j</div>
+          </div>
+          <div class="activity-item">
+            <div class="act-icon purple">🏆</div>
+            <div class="act-desc">Top 10 du tournoi <b>Hebdo</b></div>
+            <div class="act-time">2j</div>
+          </div>
+        </div>
+      </div>
+      <div class="p-card">
+        <div class="p-card-title"><span class="p-card-icon">📊</span> Compétences</div>
+        <div class="skills-list">
+          <div class="skill-item">
+            <div class="skill-header"><span>Réflexes</span><span class="skill-pct">88%</span></div>
+            <div class="skill-bar"><div class="skill-fill sf-purple" style="width:88%"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-header"><span>Stratégie</span><span class="skill-pct">72%</span></div>
+            <div class="skill-bar"><div class="skill-fill sf-pink" style="width:72%"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-header"><span>Endurance</span><span class="skill-pct">95%</span></div>
+            <div class="skill-bar"><div class="skill-fill sf-green" style="width:95%"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-header"><span>Précision</span><span class="skill-pct">64%</span></div>
+            <div class="skill-bar"><div class="skill-fill sf-gold" style="width:64%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ====================================================
+// DATA
+// ====================================================
+const games = [
+  { id:1, name:'NovaStar', emoji:'🌌', genre:'Action', bg:'linear-gradient(135deg,#1a0a3a,#2a1060)', stars:'⭐⭐⭐⭐⭐', desc:'Un jeu de survie spatiale intense avec des combats épiques et des vaisseaux personnalisables.', players:'12.4K', pop:78 },
+  { id:2, name:'Dragon', emoji:'🐉', genre:'RPG', bg:'linear-gradient(135deg,#1a0a10,#3a1020)', stars:'⭐⭐⭐⭐', desc:'Forge ton destin dans un monde fantastique peuplé de dragons et de magie ancienne.', players:'8.1K', pop:62 },
+  { id:3, name:'CyberRun', emoji:'🤖', genre:'Course', bg:'linear-gradient(135deg,#001a2a,#002a40)', stars:'⭐⭐⭐⭐⭐', desc:'Fonce à travers une mégapole cyberpunk sur des bolides futuristes à pleine vitesse.', players:'15.2K', pop:90 },
+  { id:4, name:'Puzzle', emoji:'🧩', genre:'Puzzle', bg:'linear-gradient(135deg,#0a1a0a,#102a10)', stars:'⭐⭐⭐⭐', desc:'Des énigmes redoutables qui mettent ton cerveau à l\'épreuve dans des décors magnifiques.', players:'5.6K', pop:55 },
+  { id:5, name:'Aqua Venture', emoji:'🌊', genre:'Aventure', bg:'linear-gradient(135deg,#001025,#001a35)', stars:'⭐⭐⭐⭐⭐', desc:'Explore les profondeurs océaniques à la recherche de trésors et créatures mystérieuses.', players:'9.3K', pop:70 },
+  { id:6, name:'Bit Battles', emoji:'🕹️', genre:'Rétro', bg:'linear-gradient(135deg,#1a1000,#2a1800)', stars:'⭐⭐⭐⭐', desc:'Un hommage aux jeux d\'arcade des années 80, amélioré pour l\'ère moderne.', players:'3.2K', pop:44 },
+  { id:7, name:'SkyFly', emoji:'✈️', genre:'Action', bg:'linear-gradient(135deg,#0a0a2a,#10102a)', stars:'⭐⭐⭐⭐⭐', desc:'Combats aériens spectaculaires dans des arènes volantes suspenduesdans les nuages.', players:'11.8K', pop:85 },
+  { id:8, name:'Dark Vault Go', emoji:'⚔️', genre:'RPG', bg:'linear-gradient(135deg,#1a0000,#2a0010)', stars:'⭐⭐⭐⭐', desc:'Gère ton propre donjon, recrute des monstres et défends-toi contre les héros.', players:'6.7K', pop:58 },
+];
+
+const leaderboardGlobal = [
+  { name:'darkjohan', game:'NovaStar', pts:'98,540', level:55, color:'linear-gradient(135deg,#f5c542,#ff9800)', initials:'DJ' },
+  { name:'faker', game:'CyberRun', pts:'87,210', level:50, color:'linear-gradient(135deg,#a0a0b0,#707080)', initials:'FK' },
+  { name:'mango', game:'Dragon', pts:'76,880', level:48, color:'linear-gradient(135deg,#cd7f32,#a05020)', initials:'MG' },
+  { name:'gotagaa', game:'SkyFly', pts:'65,400', level:42, color:'linear-gradient(135deg,#7c5cfc,#fc5c7d)', initials:'GT' },
+  { name:'dangeroustiger', game:'Aqua Venture', pts:'54,200', level:39, color:'linear-gradient(135deg,#5cf0b4,#20c080)', initials:'DT' },
+  { name:'ironman', game:'Dark Vault Go', pts:'48,750', level:36, color:'linear-gradient(135deg,#ff6060,#c03030)', initials:'IM' },
+  { name:'hunter', game:'Puzzle', pts:'41,100', level:33, color:'linear-gradient(135deg,#60c0ff,#2080c0)', initials:'HT' },
+  { name:'the killer', game:'Bit Battles', pts:'35,560', level:30, color:'linear-gradient(135deg,#ff80e0,#c040a0)', initials:'TK' },
+];
+
+const leaderboardAmis = [
+  { name:'supermario', game:'NovaStar', pts:'91,200', level:52, color:'linear-gradient(135deg,#ff6060,#c03030)', initials:'SM' },
+  { name:'urnightmare', game:'Dark Vault Go', pts:'82,450', level:46, color:'linear-gradient(135deg,#7c5cfc,#4010a0)', initials:'UN' },
+  { name:'avatar', game:'SkyFly', pts:'68,900', level:40, color:'linear-gradient(135deg,#60c0ff,#2080c0)', initials:'AV' }
+];
+
+const shopItems = [
+  { id:1, name:'Skin Galactique', desc:'Transforme ton avatar en explorateur de l\'espace.', emoji:'🌌', price:500, rarity:'epic', owned:true },
+  { id:2, name:'Ailes de Dragon', desc:'Des ailes légendaires qui font trembler tes ennemis.', emoji:'🐉', price:800, rarity:'epic', owned:false },
+  { id:3, name:'Turbo Boost', desc:'+20% de vitesse en jeu pendant 7 jours.', emoji:'⚡', price:250, rarity:'rare', owned:false },
+  { id:4, name:'Bouclier Néon', desc:'Un bouclier lumineux qui protège et impressionne.', emoji:'🛡️', price:350, rarity:'rare', owned:false },
+  { id:5, name:'Cadre Doré', desc:'Un cadre exclusif pour ton profil de joueur.', emoji:'🖼️', price:150, rarity:'common', owned:false },
+  { id:6, name:'Confettis', desc:'Des effets spéciaux lors de tes victoires.', emoji:'🎉', price:100, rarity:'common', owned:false },
+  { id:7, name:'Titre Champion', desc:'Affiche ton statut légendaire avec ce titre rare.', emoji:'🏆', price:1000, rarity:'epic', owned:false },
+  { id:8, name:'Double XP 24h', desc:'Double ton expérience pendant 24 heures.', emoji:'✨', price:200, rarity:'rare', owned:false },
+];
+
+let coins = 1250;
+let activeFilter = 'Tous';
+const genres = ['Tous', 'Action', 'RPG', 'Course', 'Puzzle', 'Aventure', 'Rétro'];
+
+// ====================================================
+// NAVIGATION
+// ====================================================
+function goPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l => {
+    l.classList.toggle('active', l.dataset.page === id);
+  });
+  document.getElementById('page-' + id).classList.add('active');
+  window.scrollTo(0,0);
+
+  const map = { accueil:20, jeux:40, classement:60, boutique:80, profil:100 };
+  document.getElementById('progressBar').style.width = map[id] + '%';
+}
+
+// ====================================================
+// HOME GRID
+// ====================================================
+function renderHomeGrid() {
+  const top = games.slice(0,4);
+  document.getElementById('homeGameGrid').innerHTML = top.map(g => `
+    <div class="game-card" onclick="openModal(${g.id})">
+      ${g.id===1 ? '<span class="badge-new">Nouveau</span>' : ''}
+      <div class="game-thumb">
+        <div class="thumb-bg" style="background:${g.bg}"></div>
+        <span style="position:relative;font-size:3.5rem">${g.emoji}</span>
+      </div>
+      <div class="game-info">
+        <div class="game-name">${g.name}</div>
+        <div class="game-meta">
+          <span class="game-genre">${g.genre}</span>
+          <span class="game-stars">${g.stars}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ====================================================
+// JEUX GRID
+// ====================================================
+function renderFilters() {
+  document.getElementById('filtersBar').innerHTML = genres.map(g => `
+    <button class="filter-btn ${g===activeFilter?'active':''}" onclick="setFilter('${g}')">${g}</button>
+  `).join('');
+}
+
+function setFilter(f) {
+  activeFilter = f;
+  renderFilters();
+  renderAllGames();
+}
+
+function renderAllGames() {
+  const filtered = activeFilter === 'Tous' ? games : games.filter(g => g.genre === activeFilter);
+  document.getElementById('allGamesGrid').innerHTML = filtered.map(g => `
+    <div class="game-card-lg" onclick="openModal(${g.id})">
+      <div class="gcl-thumb">
+        <div style="position:absolute;inset:0;background:${g.bg};opacity:0.5"></div>
+        <span style="position:relative;font-size:3rem">${g.emoji}</span>
+      </div>
+      <div class="gcl-info">
+        <div class="gcl-name">${g.name}</div>
+        <div class="gcl-row">
+          <span class="gcl-genre">${g.genre}</span>
+          <span class="gcl-players">● ${g.players} joueurs</span>
+        </div>
+        <div class="gcl-bar"><div class="gcl-fill" style="width:${g.pop}%"></div></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ====================================================
+// LEADERBOARD
+// ====================================================
+function renderLb(type='global') {
+  const data = type === 'amis' ? leaderboardAmis : leaderboardGlobal;
+  const rankClass = ['top1','top2','top3'];
+  const rankLabel = ['r1','r2','r3'];
+  document.getElementById('lbList').innerHTML = data.map((p,i) => `
+    <div class="lb-item ${i<3?rankClass[i]:''}">
+      <div class="lb-rank ${i<3?rankLabel[i]:''}">
+        ${i===0?'👑':i===1?'🥈':i===2?'🥉':i+1}
+      </div>
+      <div class="lb-avatar" style="background:${p.color}">${p.initials}</div>
+      <div class="lb-info">
+        <div class="lb-name">${p.name}</div>
+        <div class="lb-game">${p.game}</div>
+      </div>
+      <div class="lb-score">
+        <div class="lb-pts">${p.pts}</div>
+        <div class="lb-level">Niv. ${p.level}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function setLbTab(el, type) {
+  document.querySelectorAll('.lb-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderLb(type);
+}
+
+// ====================================================
+// BOUTIQUE
+// ====================================================
+function renderShop() {
+  document.getElementById('shopCoins').textContent = coins.toLocaleString('fr-FR');
+  document.getElementById('coinsDisplay').textContent = coins.toLocaleString('fr-FR');
+
+  document.getElementById('shopGrid').innerHTML = shopItems.map(item => `
+    <div class="shop-item">
+      <div class="si-thumb" style="background:linear-gradient(135deg,#0a0a1a,#1a1a2a)">
+        <span class="si-rarity rarity-${item.rarity}">${item.rarity==='epic'?'Épique':item.rarity==='rare'?'Rare':'Commun'}</span>
+        <span style="font-size:3.5rem">${item.emoji}</span>
+      </div>
+      <div class="si-info">
+        <div class="si-name">${item.name}</div>
+        <div class="si-desc">${item.desc}</div>
+        <div class="si-row">
+          <div class="si-price">🪙 ${item.price}</div>
+          <button class="buy-btn ${item.owned?'owned':''}"
+            onclick="buyItem(${item.id})"
+            ${item.owned?'disabled':''}>
+            ${item.owned?'✓ Possédé':'Acheter'}
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function buyItem(id) {
+  const item = shopItems.find(i => i.id === id);
+  if (!item || item.owned) return;
+  if (coins < item.price) {
+    showNotif('❌', 'Pièces insuffisantes !'); return;
+  }
+  coins -= item.price;
+  item.owned = true;
+  renderShop();
+  showNotif('✅', '${item.name} acheté !');
+}
+
+// ====================================================
+// MODAL
+// ====================================================
+function openModal(id) {
+  const g = games.find(x => x.id === id);
+  if (!g) return;
+  document.getElementById('modalThumb').textContent = g.emoji;
+  document.getElementById('modalName').textContent = g.name;
+  document.getElementById('modalDesc').textContent = g.desc;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+
+function startGame() {
+  closeModal();
+  showNotif('🎮', 'Lancement du jeu…');
+  setTimeout(() => showNotif('⚡', '+50 pièces gagnées !'), 2500);
+  coins += 50;
+  setTimeout(() => {
+    document.getElementById('coinsDisplay').textContent = coins.toLocaleString('fr-FR');
+    document.getElementById('shopCoins').textContent = coins.toLocaleString('fr-FR');
+  }, 2600);
+}
+
+document.getElementById('modalOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// ====================================================
+// NOTIF
+// ====================================================
+let notifTimer;
+function showNotif(icon, text) {
+  clearTimeout(notifTimer);
+  document.getElementById('notifIcon').textContent = icon;
+  document.getElementById('notifText').textContent = text;
+  const el = document.getElementById('notif');
+  el.classList.add('show');
+  notifTimer = setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+// ====================================================
+// INIT
+// ====================================================
+renderHomeGrid();
+renderFilters();
+renderAllGames();
+renderLb();
+renderShop();
+</script>
+</body>
+</html>
