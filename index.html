@@ -1,5 +1,5 @@
 <!DOCTYPE html>
- <html lang="fr">
+<html lang="fr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -301,7 +301,7 @@
     .team-name { font-family: var(--ff-display); font-size: 1.15rem; margin-bottom: .2rem; }
     .team-role { font-size: .85rem; color: var(--sepia); text-transform: uppercase; letter-spacing: .1em; }
 
-    /* GALLERY */
+   
     .gallery-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -412,7 +412,7 @@
     }
     .toast.show { transform: translateY(0); opacity: 1; }
 
-    /* Loading skeleton */
+   
     .img-loading {
       background: linear-gradient(90deg, #d4c9a8 25%, #e8dfc5 50%, #d4c9a8 75%);
       background-size: 200% 100%;
@@ -439,7 +439,7 @@
 </head>
 <body>
 
-<!-- NAVBAR -->
+
 <nav class="navbar">
   <div class="nav-logo">Antiqua <span>·</span> Trésors</div>
   <ul class="nav-links" id="navLinks">
@@ -454,7 +454,6 @@
   </div>
 </nav>
 
-<!-- PAGE 1 — ACCUEIL -->
 <section class="page active" id="page-home">
   <div class="hero">
     <div class="hero-bg-circles"></div>
@@ -517,7 +516,7 @@
   </div>
 </section>
 
-<!-- PAGE 2 — PRODUITS -->
+
 <section class="page" id="page-produits">
   <div class="shop-hero">
     <h2>Notre Collection</h2>
@@ -539,7 +538,7 @@
   <div class="products-grid" id="productsGrid"></div>
 </section>
 
-<!-- PAGE 3 — À PROPOS -->
+
 <section class="page" id="page-apropos">
   <div class="about-split">
     <div class="about-visual" style="position:relative;">
@@ -590,7 +589,7 @@
   </div>
 </section>
 
-<!-- PAGE 4 — GALERIE -->
+
 <section class="page" id="page-galerie">
   <div class="section" style="padding-bottom:1rem;">
     <p class="section-title">Galerie</p>
@@ -600,7 +599,7 @@
   <div class="gallery-grid" id="galleryGrid"></div>
 </section>
 
-<!-- PAGE 5 — CONTACT -->
+
 <section class="page" id="page-contact">
   <div class="section" style="padding-bottom:0;">
     <p class="section-title">Contactez-Nous</p>
@@ -700,7 +699,7 @@
   </div>
 </section>
 
-<!-- FOOTER -->
+
 <footer>
   <div class="footer-grid">
     <div class="footer-col">
@@ -739,7 +738,7 @@
   </div>
 </footer>
 
-<!-- LIGHTBOX -->
+
 <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
   <div class="lightbox-inner">
     <button class="lightbox-close" onclick="closeLightbox()">✕</button>
@@ -748,7 +747,7 @@
   </div>
 </div>
 
-<!-- TOAST -->
+
 <div class="toast" id="toast">✓ Ajouté au panier !</div>
 
 <script>
@@ -773,10 +772,8 @@
   function prevSlide() { goSlide(slideIndex - 1); }
   setInterval(nextSlide, 6000);
 
-  // Each product has a unique Unsplash image (curated search IDs for antique/moroccan items)
-  // Using Unsplash Source API with relevant keywords for each category
   const products = [
-    // MOBILIER (unique items only)
+  
     {
       id: 1,
       name: 'Commode Zellige Sculptée',
@@ -855,7 +852,7 @@
       img: 'https://www.univers-ciel-de-lit.com/_i/175928/10889/2452/92/lit-baldaquin-adulte-rouge-renaissance.jpeg'
     },
 
-    // CÉRAMIQUE (unique items only)
+  
     {
       id: 8,
       name: 'Vase Zellij Bleu de Fès',
@@ -923,7 +920,7 @@
       img: 'https://daradyafa.com/cdn/shop/files/SNGOLDSILVER33_1200x1200.webp?v=1713748420'
     },
 
-    // TABLEAUX (unique items)
+    
     {
       id: 14,
       name: 'Miniature Orientaliste',
@@ -980,7 +977,7 @@
       img: 'https://urbanart.ma/8266-large_default/tableau-decoratif-femme-berbere.jpg'
     },
 
-    // BIJOUX (unique items)
+  
     {
       id: 19,
       name: 'Collier Amazigh Argent',
@@ -1037,7 +1034,7 @@
       img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmi8wAbwFavKEQXW75Z0gVD_pTS6FFAtKodw&s'
     },
 
-    // HORLOGERIE (unique items)
+    
     {
       id: 24,
       name: 'Horloge de Mosquée Ottomane',
@@ -1083,7 +1080,7 @@
       img: 'https://ma.jumia.is/unsafe/fit-in/680x680/filters:fill(white)/product/43/256966/1.jpg?0905'
     },
 
-    // TEXTILES (unique items)
+   
     {
       id: 28,
       name: 'Tapis Berbère Moyen Atlas',
@@ -1129,7 +1126,7 @@
       img: 'https://www.casablancax.com/wp-content/uploads/2025/05/C254D2B8-EDA4-4041-A161-D8007EC51A1A.jpeg'
     },
 
-    // BRONZES & CUIVRES (unique items)
+  
     {
       id: 32,
       name: 'Plateau Cuivre Gravé Tawriq',
@@ -1164,7 +1161,7 @@
       img: 'https://fesstore.ma/wp-content/uploads/2025/08/WhatsApp-Image-2025-08-06-a-21.37.35_9fef9528.jpg'
     },
 
-    // ARMES DÉCORATIVES (unique items)
+   
     {
       id: 35,
       name: 'Koummya Argent Gravée',
@@ -1232,7 +1229,6 @@
     setTimeout(() => t.classList.remove('show'), 3000);
   }
 
-  // Gallery uses same products as a curated selection
   const galleryItems = [
     { img: 'https://i.etsystatic.com/32696640/r/il/83043e/6122564868/il_340x270.6122564868_r41z.jpg', title: 'Commode Zellige Sculptée', desc: 'Bois de cèdre, incrustations zellige, XIXe siècle, Fès' },
     { img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSW-ncuPWm9Gi8b7CzdwrF9NpjqEnt3pbplyQ&s', title: 'Collier Amazigh Argent', desc: 'Argent niellé et corail rouge, Atlas Central, XIXe s.' },
