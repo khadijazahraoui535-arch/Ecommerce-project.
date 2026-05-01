@@ -1,447 +1,15 @@
-<!DOCTYPE html>
-<html lang="fr">
+<!DOCTYPE html><html lang="fr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Antiqua — Trésors</title>
+  <title>Antiqua Trésors</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:wght@300;400;500&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --cream:  #f5f0e8;
-      --paper:  #ede6d3;
-      --ink:    #1a1208;
-      --sepia:  #7a5c34;
-      --gold:   #c9993a;
-      --rust:   #9e4423;
-      --moss:   #4a5e3a;
-      --shadow: rgba(26,18,8,.18);
-      --ff-display: 'Playfair Display', serif;
-      --ff-body:    'Cormorant Garamond', serif;
-    }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; font-size: 16px; }
-    body {
-      background: var(--cream);
-      color: var(--ink);
-      font-family: var(--ff-body);
-      font-size: 1.1rem;
-      line-height: 1.7;
-      overflow-x: hidden;
-    }
-    a { color: inherit; text-decoration: none; }
-    img { max-width: 100%; display: block; }
-    ul { list-style: none; }
-
-    body::before {
-      content: '';
-      position: fixed; inset: 0; z-index: 0; pointer-events: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
-      opacity: .5;
-    }
-    body > * { position: relative; z-index: 1; }
-
-    .navbar {
-      position: sticky; top: 0; z-index: 999;
-      background: var(--ink);
-      padding: .9rem 2rem;
-      display: flex; align-items: center; justify-content: space-between;
-      box-shadow: 0 2px 12px var(--shadow);
-    }
-    .nav-logo {
-      font-family: var(--ff-display);
-      font-size: 1.6rem; color: var(--gold);
-      letter-spacing: .04em;
-    }
-    .nav-logo span { font-style: italic; color: var(--cream); }
-    .nav-links { display: flex; gap: 2rem; }
-    .nav-links a {
-      color: var(--paper);
-      font-size: .95rem;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      position: relative;
-      padding-bottom: 2px;
-      transition: color .25s;
-    }
-    .nav-links a::after {
-      content: '';
-      position: absolute; bottom: 0; left: 0; width: 0; height: 1px;
-      background: var(--gold); transition: width .3s;
-    }
-    .nav-links a:hover { color: var(--gold); }
-    .nav-links a:hover::after { width: 100%; }
-    .nav-toggle { display: none; cursor: pointer; flex-direction: column; gap: 5px; }
-    .nav-toggle span { width: 24px; height: 2px; background: var(--paper); display: block; transition: .3s; }
-
-    .page { display: none; animation: fadeIn .5s ease; }
-    .page.active { display: block; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-
-    .hero {
-      min-height: 90vh;
-      display: flex; align-items: center; justify-content: center;
-      background: linear-gradient(135deg, #1a1208 0%, #3d2b13 60%, #7a5c34 100%);
-      position: relative; overflow: hidden; padding: 4rem 2rem;
-      text-align: center;
-    }
-    .hero-bg-circles { position: absolute; inset: 0; overflow: hidden; }
-    .hero-bg-circles::before, .hero-bg-circles::after {
-      content: '';
-      position: absolute;
-      border-radius: 50%;
-      border: 1px solid rgba(201,153,58,.2);
-    }
-    .hero-bg-circles::before { width: 600px; height: 600px; top: -200px; right: -150px; }
-    .hero-bg-circles::after  { width: 400px; height: 400px; bottom: -100px; left: -100px; }
-    .hero-content { position: relative; z-index: 2; max-width: 700px; }
-    .hero-eyebrow {
-      font-size: .8rem; letter-spacing: .3em; text-transform: uppercase;
-      color: var(--gold); margin-bottom: 1.2rem;
-      animation: slideDown .8s .1s both;
-    }
-    .hero h1 {
-      font-family: var(--ff-display);
-      font-size: clamp(2.8rem, 8vw, 5.5rem);
-      color: var(--cream); line-height: 1.1;
-      animation: slideDown .8s .2s both;
-    }
-    .hero h1 em { color: var(--gold); font-style: italic; }
-    .hero-sub {
-      color: var(--paper); font-size: 1.15rem;
-      margin: 1.5rem 0 2.5rem;
-      font-weight: 300;
-      animation: slideDown .8s .35s both;
-    }
-    .btn {
-      display: inline-block;
-      padding: .85rem 2.4rem;
-      font-family: var(--ff-body);
-      font-size: 1rem; letter-spacing: .12em; text-transform: uppercase;
-      border: 1px solid var(--gold);
-      color: var(--ink); background: var(--gold);
-      cursor: pointer; transition: background .25s, color .25s, transform .2s;
-      border-radius: 2px;
-    }
-    .btn:hover { background: transparent; color: var(--gold); transform: translateY(-2px); }
-    .btn-outline { background: transparent; color: var(--gold); }
-    .btn-outline:hover { background: var(--gold); color: var(--ink); }
-
-    @keyframes slideDown {
-      from { opacity: 0; transform: translateY(-20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .features-strip {
-      background: var(--paper);
-      display: flex; flex-wrap: wrap; justify-content: center;
-      gap: 0; border-top: 1px solid rgba(122,92,52,.2);
-    }
-    .feature-item {
-      flex: 1 1 200px; max-width: 280px;
-      padding: 2rem 1.5rem; text-align: center;
-      border-right: 1px solid rgba(122,92,52,.15);
-      transition: background .25s;
-    }
-    .feature-item:last-child { border-right: none; }
-    .feature-item:hover { background: var(--cream); }
-    .feature-icon { font-size: 2rem; margin-bottom: .6rem; }
-    .feature-title { font-family: var(--ff-display); font-size: 1rem; margin-bottom: .3rem; color: var(--sepia); }
-    .feature-desc { font-size: .9rem; color: #5a4a30; }
-
-    .section { padding: 5rem 2rem; max-width: 1100px; margin: 0 auto; }
-    .section-title {
-      font-family: var(--ff-display);
-      font-size: clamp(1.8rem, 4vw, 2.8rem);
-      color: var(--sepia); margin-bottom: .5rem;
-    }
-    .section-sub { color: #7a6a50; font-size: 1rem; margin-bottom: 3rem; }
-    .divider {
-      width: 60px; height: 2px; background: var(--gold);
-      margin: .8rem 0 2rem;
-    }
-    .testimonials-slider { position: relative; overflow: hidden; }
-    .testimonials-track { display: flex; transition: transform .5s ease; }
-    .testimonial {
-      min-width: 100%;
-      background: var(--paper);
-      padding: 3rem; border-left: 4px solid var(--gold);
-      border-radius: 2px;
-    }
-    .testimonial-text {
-      font-size: 1.25rem; font-style: italic;
-      color: var(--ink); margin-bottom: 1.5rem;
-      font-family: var(--ff-display);
-    }
-    .testimonial-author { font-size: .9rem; letter-spacing: .1em; text-transform: uppercase; color: var(--sepia); }
-    .slider-controls { display: flex; gap: 1rem; margin-top: 1.5rem; }
-    .slider-btn {
-      width: 40px; height: 40px;
-      border: 1px solid var(--sepia); background: transparent;
-      color: var(--sepia); cursor: pointer; font-size: 1.1rem;
-      border-radius: 50%; transition: .25s;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .slider-btn:hover { background: var(--sepia); color: var(--cream); }
-
-    .shop-hero {
-      background: linear-gradient(to right, var(--ink), #3d2b13);
-      padding: 3rem 2rem; text-align: center;
-    }
-    .shop-hero h2 { font-family: var(--ff-display); font-size: 2.5rem; color: var(--gold); }
-    .shop-hero p { color: var(--paper); margin-top: .5rem; }
-
-    .filters {
-      display: flex; flex-wrap: wrap; gap: .8rem;
-      padding: 2rem 2rem 0;
-      max-width: 1100px; margin: 0 auto;
-    }
-    .filter-btn {
-      padding: .45rem 1.4rem;
-      border: 1px solid var(--sepia); background: transparent;
-      color: var(--sepia); cursor: pointer; border-radius: 20px;
-      font-family: var(--ff-body); font-size: .95rem;
-      transition: .25s;
-    }
-    .filter-btn.active, .filter-btn:hover { background: var(--sepia); color: var(--cream); }
-
-    .products-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-      gap: 2rem; padding: 2rem;
-      max-width: 1100px; margin: 0 auto;
-    }
-    .product-card {
-      background: var(--paper);
-      border-radius: 3px; overflow: hidden;
-      box-shadow: 0 4px 18px var(--shadow);
-      transition: transform .3s, box-shadow .3s;
-      cursor: pointer;
-    }
-    .product-card:hover { transform: translateY(-6px); box-shadow: 0 10px 30px rgba(26,18,8,.25); }
-    .product-img {
-      height: 220px; overflow: hidden; position: relative;
-      background: linear-gradient(135deg, #3d2b13, #7a5c34);
-    }
-    .product-img img {
-      width: 100%; height: 100%; object-fit: cover;
-      transition: transform .5s;
-    }
-    .product-card:hover .product-img img { transform: scale(1.06); }
-    .product-img-fallback {
-      width: 100%; height: 100%;
-      background: linear-gradient(135deg, #3d2b13 0%, #7a5c34 60%, #c9993a 100%);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 3.5rem;
-    }
-    .product-badge {
-      position: absolute; top: 12px; left: 12px;
-      background: var(--rust); color: #fff;
-      font-size: .75rem; letter-spacing: .1em; text-transform: uppercase;
-      padding: .2rem .7rem; border-radius: 2px;
-    }
-    .product-info { padding: 1.3rem 1.5rem; }
-    .product-era { font-size: .78rem; letter-spacing: .15em; text-transform: uppercase; color: var(--gold); margin-bottom: .3rem; }
-    .product-name { font-family: var(--ff-display); font-size: 1.2rem; margin-bottom: .4rem; }
-    .product-origin { font-size: .82rem; color: var(--sepia); font-style: italic; margin-bottom: .4rem; }
-    .product-desc { font-size: .9rem; color: #5a4a30; margin-bottom: 1rem; line-height: 1.5; }
-    .product-footer { display: flex; align-items: center; justify-content: space-between; }
-    .product-price { font-family: var(--ff-display); font-size: 1.35rem; color: var(--rust); }
-    .add-cart-btn {
-      background: var(--ink); color: var(--gold);
-      border: none; padding: .5rem 1rem;
-      font-family: var(--ff-body); font-size: .85rem; letter-spacing: .08em;
-      cursor: pointer; border-radius: 2px; transition: .25s;
-    }
-    .add-cart-btn:hover { background: var(--gold); color: var(--ink); }
-
-    .about-split {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 0;
-      min-height: 60vh; max-width: 1100px; margin: 3rem auto;
-      border-radius: 4px; overflow: hidden;
-      box-shadow: 0 8px 32px var(--shadow);
-    }
-    .about-visual {
-      background: linear-gradient(145deg, #3d2b13, #7a5c34);
-      display: flex; align-items: center; justify-content: center;
-      padding: 3rem; color: var(--cream); text-align: center;
-    }
-    .about-visual .big-year {
-      font-family: var(--ff-display);
-      font-size: 7rem; color: var(--gold); opacity: .2;
-      position: absolute; line-height: 1;
-    }
-    .about-visual .icon-stack { position: relative; z-index: 1; }
-    .about-visual .icon-stack span { font-size: 4rem; display: block; margin-bottom: 1rem; }
-    .about-visual .icon-stack p { font-size: 1.1rem; color: var(--paper); font-style: italic; }
-    .about-text { background: var(--paper); padding: 4rem 3rem; }
-    .about-text h2 { font-family: var(--ff-display); font-size: 2rem; color: var(--sepia); margin-bottom: .5rem; }
-    .about-text p { font-size: 1.05rem; color: #4a3a20; margin-bottom: 1.2rem; }
-
-    .team-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 2rem; padding: 0 2rem 4rem;
-      max-width: 1100px; margin: 0 auto;
-    }
-    .team-card {
-      background: var(--paper); border-radius: 3px;
-      padding: 2rem; text-align: center;
-      box-shadow: 0 4px 16px var(--shadow);
-      transition: transform .3s;
-    }
-    .team-card:hover { transform: translateY(-4px); }
-    .team-avatar {
-      width: 80px; height: 80px; border-radius: 50%;
-      background: linear-gradient(135deg, var(--sepia), var(--gold));
-      margin: 0 auto 1rem;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 2rem; color: var(--cream);
-      overflow: hidden;
-    }
-    .team-avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .team-name { font-family: var(--ff-display); font-size: 1.15rem; margin-bottom: .2rem; }
-    .team-role { font-size: .85rem; color: var(--sepia); text-transform: uppercase; letter-spacing: .1em; }
-
-   
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1.2rem; padding: 2rem;
-      max-width: 1200px; margin: 0 auto;
-    }
-    .gallery-item {
-      position: relative; overflow: hidden; border-radius: 3px;
-      cursor: pointer; aspect-ratio: 4/3;
-      background: var(--paper);
-      box-shadow: 0 4px 16px var(--shadow);
-    }
-    .gallery-item:nth-child(3n) { aspect-ratio: 4/5; }
-    .gallery-item img {
-      width: 100%; height: 100%; object-fit: cover;
-      transition: transform .5s;
-      display: block;
-    }
-    .gallery-item:hover img { transform: scale(1.06); }
-    .gallery-overlay {
-      position: absolute; inset: 0;
-      background: rgba(26,18,8,.7);
-      opacity: 0; transition: opacity .35s;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      color: var(--cream); text-align: center; padding: 1.5rem;
-    }
-    .gallery-item:hover .gallery-overlay { opacity: 1; }
-    .gallery-overlay h3 { font-family: var(--ff-display); font-size: 1.2rem; margin-bottom: .4rem; color: var(--gold); }
-    .gallery-overlay p { font-size: .9rem; }
-
-    .lightbox {
-      display: none; position: fixed; inset: 0; z-index: 2000;
-      background: rgba(0,0,0,.92);
-      align-items: center; justify-content: center;
-    }
-    .lightbox.open { display: flex; }
-    .lightbox-inner { max-width: 700px; width: 90%; text-align: center; position: relative; }
-    .lightbox-close {
-      position: absolute; top: -40px; right: 0;
-      color: var(--gold); font-size: 1.8rem; cursor: pointer; background: none; border: none;
-    }
-    .lightbox-img {
-      width: 100%; height: 400px;
-      border-radius: 4px; overflow: hidden; margin-bottom: 1rem;
-      background: linear-gradient(135deg, var(--ink), #3d2b13);
-    }
-    .lightbox-img img { width: 100%; height: 100%; object-fit: cover; }
-    .lightbox-caption { color: var(--paper); font-family: var(--ff-display); font-size: 1.3rem; }
-
-    .contact-wrapper {
-      max-width: 900px; margin: 4rem auto; padding: 0 2rem;
-      display: grid; grid-template-columns: 1fr 1.4fr; gap: 3rem;
-    }
-    .contact-info h2 { font-family: var(--ff-display); font-size: 2rem; color: var(--sepia); margin-bottom: 1rem; }
-    .contact-info p { color: #5a4a30; margin-bottom: 1.5rem; }
-    .contact-item { display: flex; align-items: flex-start; gap: .8rem; margin-bottom: 1.2rem; }
-    .contact-icon { font-size: 1.3rem; margin-top: .1rem; }
-    .contact-detail strong { display: block; font-family: var(--ff-display); color: var(--sepia); }
-    .contact-detail span { font-size: .95rem; color: #5a4a30; }
-
-    .contact-form { background: var(--paper); padding: 2.5rem; border-radius: 4px; box-shadow: 0 6px 24px var(--shadow); }
-    .contact-form h3 { font-family: var(--ff-display); font-size: 1.5rem; color: var(--sepia); margin-bottom: 1.5rem; }
-    .form-group { margin-bottom: 1.3rem; }
-    .form-group label { display: block; font-size: .85rem; letter-spacing: .1em; text-transform: uppercase; color: var(--sepia); margin-bottom: .5rem; }
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      width: 100%; padding: .8rem 1rem;
-      background: var(--cream); border: 1px solid rgba(122,92,52,.3);
-      font-family: var(--ff-body); font-size: 1rem; color: var(--ink);
-      border-radius: 2px; outline: none; transition: border-color .25s;
-    }
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus { border-color: var(--gold); }
-    .form-group textarea { resize: vertical; min-height: 120px; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    .form-msg {
-      display: none; padding: 1rem;
-      background: #4a5e3a; color: #d4ecc8;
-      border-radius: 2px; margin-top: 1rem; font-size: .95rem;
-    }
-    .form-msg.show { display: block; }
-
-    footer {
-      background: var(--ink); color: var(--paper);
-      padding: 4rem 2rem 2rem;
-    }
-    .footer-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 2rem; max-width: 1100px; margin: 0 auto 2rem;
-    }
-    .footer-col h4 { font-family: var(--ff-display); color: var(--gold); margin-bottom: 1rem; font-size: 1.1rem; }
-    .footer-col p, .footer-col a { font-size: .9rem; color: #a08060; display: block; margin-bottom: .4rem; transition: color .2s; }
-    .footer-col a:hover { color: var(--gold); }
-    .footer-bottom { border-top: 1px solid rgba(255,255,255,.1); padding-top: 1.5rem; text-align: center; color: #6a5a40; font-size: .85rem; max-width: 1100px; margin: 0 auto; }
-
-    .toast {
-      position: fixed; bottom: 2rem; right: 2rem; z-index: 3000;
-      background: var(--moss); color: var(--cream);
-      padding: 1rem 1.8rem; border-radius: 4px;
-      font-family: var(--ff-body); font-size: 1rem;
-      box-shadow: 0 4px 20px rgba(0,0,0,.3);
-      transform: translateY(100px); opacity: 0;
-      transition: .4s cubic-bezier(.175,.885,.32,1.275);
-      pointer-events: none;
-    }
-    .toast.show { transform: translateY(0); opacity: 1; }
-
-   
-    .img-loading {
-      background: linear-gradient(90deg, #d4c9a8 25%, #e8dfc5 50%, #d4c9a8 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.5s infinite;
-    }
-    @keyframes shimmer {
-      0% { background-position: -200% 0; }
-      100% { background-position: 200% 0; }
-    }
-
-    @media (max-width: 768px) {
-      .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: var(--ink); padding: 1.5rem 2rem; gap: 1.2rem; }
-      .nav-links.open { display: flex; }
-      .nav-toggle { display: flex; }
-      .about-split { grid-template-columns: 1fr; }
-      .contact-wrapper { grid-template-columns: 1fr; }
-      .form-row { grid-template-columns: 1fr; }
-    }
-    @media (max-width: 480px) {
-      .products-grid { grid-template-columns: 1fr; }
-      .gallery-grid { grid-template-columns: 1fr; }
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
-
 <nav class="navbar">
-  <div class="nav-logo">Antiqua <span>·</span> Trésors</div>
+  <div class="nav-logo">Antiqua <span></span> Trésors</div>
   <ul class="nav-links" id="navLinks">
     <li><a href="#" onclick="showPage('home')">Accueil</a></li>
     <li><a href="#" onclick="showPage('produits')">Produits</a></li>
@@ -458,9 +26,9 @@
   <div class="hero">
     <div class="hero-bg-circles"></div>
     <div class="hero-content">
-      <p class="hero-eyebrow">✦ Collection Exclusive ✦</p>
+      <p class="hero-eyebrow">Collection Exclusive</p>
       <h1>L'Art des <em>Objets</em><br>Anciens</h1>
-      <p class="hero-sub">Des pièces authentiques soigneusement sélectionnées, chargées d'histoire et de caractère. Livraison partout au Maroc.</p>
+      <p class="hero-sub">Des pièces authentiques, choisies avec soin, chacune porte une histoire forte, du caractère. Livraison partout au Maroc.</p>
       <button class="btn" onclick="showPage('produits')">Découvrir la Collection</button>
       &nbsp;
       <button class="btn btn-outline" onclick="showPage('galerie')">Voir la Galerie</button>
@@ -469,24 +37,23 @@
 
   <div class="features-strip">
     <div class="feature-item">
-      <div class="feature-icon">🔍</div>
-      <div class="feature-title">Authenticité Certifiée</div>
-      <div class="feature-desc">Chaque objet est expertisé et authentifié avant la mise en vente.</div>
+      <div class="feature-title">Authenticité vérifiée</div>
+      <div class="feature-desc">Chaque objet est vérifié par des experts avant sa mise en vente.</div>
     </div>
+
     <div class="feature-item">
-      <div class="feature-icon">🚚</div>
-      <div class="feature-title">Livraison Partout au Maroc</div>
-      <div class="feature-desc">Emballage soigné et livraison assurée dans toutes les villes du Royaume.</div>
+      <div class="feature-title">Livraison dans tout le Maroc</div>
+      <div class="feature-desc">On soigne l’emballage et on livre directement chez vous.</div>
     </div>
+
     <div class="feature-item">
-      <div class="feature-icon">🤝</div>
-      <div class="feature-title">Service Personnalisé</div>
-      <div class="feature-desc">Conseils d'experts pour trouver la pièce de vos rêves.</div>
+      <div class="feature-title">Service personnalisé</div>
+      <div class="feature-desc">On vous aide à trouver exactement ce que vous cherchez.</div>
     </div>
+
     <div class="feature-item">
-      <div class="feature-icon">💳</div>
-      <div class="feature-title">Paiement Sécurisé</div>
-      <div class="feature-desc">Transactions sûres, retour garanti sous 14 jours.</div>
+      <div class="feature-title">Paiement sécurisé</div>
+      <div class="feature-desc">Achetez en toute tranquillité.</div>
     </div>
   </div>
 
@@ -496,19 +63,22 @@
     <div class="testimonials-slider">
       <div class="testimonials-track" id="testimonialsTrack">
         <div class="testimonial">
-          <div class="testimonial-text">« J'ai trouvé chez Antiqua une horloge de parquet d'une beauté rare. L'expertise et la passion de l'équipe m'ont conquis dès le premier contact. »</div>
-          <div class="testimonial-author">— Fatima Z., Casablanca</div>
+          <div class="testimonial-text">« J'ai trouvé chez Antiqua une horloge de parquet superbe. L’expertise et la passion de l’équipe m’ont convaincue dès le premier contact. »</div>
+          <div class="testimonial-author"> Fatima Z., Casablanca</div>
         </div>
+
         <div class="testimonial">
-          <div class="testimonial-text">« Une collection exceptionnelle et un service impeccable. Je recommande Antiqua à tous les passionnés d'objets anciens. Qualité et sérieux au rendez-vous. »</div>
-          <div class="testimonial-author">— Karim B., Rabat</div>
+          <div class="testimonial-text">« Une collection impressionnante et un service irréprochable. Antiqua, je le recommande à tous les passionnés d’objets anciens. Ici, qualité et sérieux sont authentiques. »</div>
+          <div class="testimonial-author"> Karim B., Rabat</div>
         </div>
+
         <div class="testimonial">
-          <div class="testimonial-text">« Grâce à Antiqua, j'ai pu compléter ma collection de céramiques Art Nouveau avec des pièces introuvables ailleurs. La livraison à Fès était rapide et soignée ! »</div>
-          <div class="testimonial-author">— Nadia T., Fès</div>
+          <div class="testimonial-text">« Grâce à Antiqua, j’ai pu compléter ma collection Art Nouveau avec des pièces difficiles à trouver ailleurs. La livraison à Fès était rapide et sans problème. »</div>
+          <div class="testimonial-author"> Nadia T., Fès</div>
         </div>
       </div>
     </div>
+
     <div class="slider-controls">
       <button class="slider-btn" onclick="prevSlide()">&#8592;</button>
       <button class="slider-btn" onclick="nextSlide()">&#8594;</button>
@@ -516,11 +86,10 @@
   </div>
 </section>
 
-
 <section class="page" id="page-produits">
   <div class="shop-hero">
     <h2>Notre Collection</h2>
-    <p>Des trésors authentiques du XVIIIe au XXe siècle — Livraison partout au Maroc</p>
+    <p>Des trésors authentiques du XVIIIe au XXe siècle, livrés dans tout le Maroc</p>
   </div>
 
   <div class="filters">
@@ -538,7 +107,6 @@
   <div class="products-grid" id="productsGrid"></div>
 </section>
 
-
 <section class="page" id="page-apropos">
   <div class="about-split">
     <div class="about-visual" style="position:relative;">
@@ -550,12 +118,17 @@
         <p>« Chaque objet porte<br>l'âme de son époque. »</p>
       </div>
     </div>
+
     <div class="about-text">
       <h2>Notre Histoire</h2>
       <div class="divider"></div>
-      <p>Fondée en 1887 à Marrakech, la maison <strong>Antiqua</strong> est née de la passion de Moulay Hassan El Fassi pour les objets d'art et les antiquités du Maroc. Depuis quatre générations, nous perpétuons cette tradition d'excellence au cœur de Guéliz.</p>
-      <p>Notre expertise couvre les meubles anciens en cèdre et thuya, la céramique de Fès et Salé, la peinture orientaliste, l'horlogerie et les bijoux amazighs de collection, du XVIIIe siècle à l'Art Déco des années 1930.</p>
-      <p>Chaque pièce présentée dans notre galerie est soigneusement expertisée, restaurée si nécessaire, et accompagnée d'un certificat d'authenticité reconnu par le Ministère de la Culture du Maroc. Nous livrons partout au Maroc.</p>
+
+      <p>Antiqua naît en 1887 à Marrakech, fondée par Moulay Hassan El Fassi, passionné d’art et d’objets anciens. L’activité s’est transmise sur plusieurs générations et reste aujourd’hui basée à Guéliz.</p>
+
+      <p>On se spécialise surtout dans le mobilier ancien en bois, la céramique de Fès et Salé, les tableaux orientalistes, les horloges anciennes et les bijoux traditionnels marocains.</p>
+
+      <p>Chaque pièce est vérifiée et parfois restaurée. On fournit aussi un certificat d’authenticité et on assure la livraison partout au Maroc.</p>
+
       <button class="btn" onclick="showPage('contact')">Nous Contacter</button>
     </div>
   </div>
@@ -572,6 +145,7 @@
       <div class="team-name">Bayane Tahiri</div>
       <div class="team-role">Conservateur en chef</div>
     </div>
+
     <div class="team-card">
       <div class="team-avatar">
         <img src="https://images.pexels.com/photos/8528742/pexels-photo-8528742.jpeg?cs=srgb&dl=pexels-karola-g-8528742.jpg&fm=jpg&_gl=1*ab5n3h*_ga*ODI4NDEyOTAzLjE3Nzc0NzgyMTA.*_ga_8JE65Q40S6*czE3Nzc0NzgyMDkkbzEkZzEkdDE3Nzc0NzgyNzQkajYwJGwwJGgw" alt="photo de l'expert">
@@ -579,6 +153,7 @@
       <div class="team-name">Khadija Zahraoui</div>
       <div class="team-role">Expert en Design Traditionnel</div>
     </div>
+
     <div class="team-card">
       <div class="team-avatar">
         <img src="https://images.pexels.com/photos/7706959/pexels-photo-7706959.jpeg?cs=srgb&dl=pexels-a-darmel-7706959.jpg&fm=jpg&_gl=1*8eb5w2*_ga*ODI4NDEyOTAzLjE3Nzc0NzgyMTA.*_ga_8JE65Q40S6*czE3Nzc0NzgyMDkkbzEkZzEkdDE3Nzc0NzgyNzQkajYwJGwwJGgw" alt="photo d'Ambassadeur">
@@ -589,79 +164,75 @@
   </div>
 </section>
 
-
 <section class="page" id="page-galerie">
   <div class="section" style="padding-bottom:1rem;">
     <p class="section-title">Galerie</p>
     <div class="divider"></div>
-    <p class="section-sub">Cliquez sur une pièce pour en savoir plus</p>
+    <p class="section-sub">Cliquez sur une pièce pour découvrir son histoire</p>
   </div>
   <div class="gallery-grid" id="galleryGrid"></div>
 </section>
-
 
 <section class="page" id="page-contact">
   <div class="section" style="padding-bottom:0;">
     <p class="section-title">Contactez-Nous</p>
     <div class="divider"></div>
   </div>
+
   <div class="contact-wrapper">
     <div class="contact-info">
-      <h2>Nous Sommes à Votre Service</h2>
-      <p>Notre équipe d'experts est disponible pour répondre à toutes vos questions sur nos collections, expertises et services de recherche.</p>
+      <h2>On est là pour vous aider</h2>
+      <p>L’équipe répond à toutes vos questions, que ce soit sur la collection, les expertises ou la recherche d’une pièce précise.</p>
+
       <div class="contact-item">
-        <div class="contact-icon">📍</div>
         <div class="contact-detail">
           <strong>Adresse</strong>
           <span>12 Rue de la Liberté, Guéliz, Marrakech 40000</span>
         </div>
       </div>
+
       <div class="contact-item">
-        <div class="contact-icon">📞</div>
         <div class="contact-detail">
-          <strong>Téléphone</strong>
-          <span>+212 (0)5 24 43 22 15</span>
+          <strong>Telephone</strong>
+          <span>+212 5 24 43 22 15</span>
         </div>
       </div>
+
       <div class="contact-item">
-        <div class="contact-icon">✉️</div>
         <div class="contact-detail">
           <strong>Email</strong>
-          <span>contact@antiqua-marrakech.ma</span>
+          <span>khadija@antiqua.com</span>
         </div>
       </div>
+
       <div class="contact-item">
-        <div class="contact-icon">🚚</div>
         <div class="contact-detail">
           <strong>Livraison</strong>
-          <span>Partout au Maroc — Casablanca, Rabat, Fès, Tanger, Agadir et toutes les villes</span>
-        </div>
-      </div>
-      <div class="contact-item">
-        <div class="contact-icon">🕐</div>
-        <div class="contact-detail">
-          <strong>Horaires</strong>
-          <span>Lundi–Samedi : 9h–20h | Dimanche : 10h–17h</span>
+          <span>Livraison partout au Maroc : Casablanca, Rabat, Fès, Tanger, Agadir, et autres villes.</span>
         </div>
       </div>
     </div>
 
     <div class="contact-form">
       <h3>Envoyer un Message</h3>
+
       <div class="form-row">
         <div class="form-group">
           <label>Prénom</label>
-          <input type="text" id="fPrenom" placeholder="Mohammed" pattern="[A-Za-zÀ-ÿ\s]+" title="Uniquement des lettres alphabétiques" required />
+          <input type="text" id="fPrenom" placeholder="Prénom" pattern="[A-Za-zÀ-ÿ\s]+" />
         </div>
+
         <div class="form-group">
           <label>Nom</label>
-          <input type="text" id="fNom" placeholder="Alaoui" pattern="[A-Za-zÀ-ÿ\s]+" title="Uniquement des lettres alphabétiques" required  />
+          <input type="text" id="fNom" placeholder="NOM" pattern="[A-Za-zÀ-ÿ\s]+"/>
         </div>
       </div>
+
       <div class="form-group">
         <label>Email</label>
-        <input type="email" id="fEmail" placeholder="votre@email.com" pattern="^(?=.*@)(?=.*[0-9]).*$" title="L'email doit contenir un '@' et au moins un chiffre" required />
+        <input type="email" id="fEmail" placeholder="your@email.com" pattern="^(?=.*@)(?=.*[0-9]).*$"  />
       </div>
+
       <div class="form-group">
         <label>Ville</label>
         <select id="fVille">
@@ -677,6 +248,7 @@
           <option>Autre</option>
         </select>
       </div>
+
       <div class="form-group">
         <label>Sujet</label>
         <select id="fSujet">
@@ -689,23 +261,25 @@
           <option>Autre</option>
         </select>
       </div>
+
       <div class="form-group">
         <label>Message</label>
-        <textarea id="fMessage" placeholder="Décrivez votre demande..." ></textarea>
+        <textarea id="fMessage" placeholder="Décrivez votre demande..."></textarea>
       </div>
+
       <button class="btn" style="width:100%;" onclick="submitForm()">Envoyer le Message</button>
-      <div class="form-msg" id="formMsg">✓ Votre message a bien été envoyé ! Nous vous répondrons sous 48h.</div>
+      <div class="form-msg" id="formMsg">Votre message a bien été envoyé ! Vous aurez une réponse sous 48h.</div>
     </div>
   </div>
 </section>
-
 
 <footer>
   <div class="footer-grid">
     <div class="footer-col">
       <h4>Antiqua</h4>
-      <p>La référence marocaine des antiquités et objets d'art depuis 1887. Guéliz, Marrakech. Livraison partout au Maroc.</p>
+      <p>Depuis 1887 : la référence marocaine en antiquités et objets d’art, au cœur de Guéliz, Marrakech. Livraison dans tout le Maroc.</p>
     </div>
+
     <div class="footer-col">
       <h4>Navigation</h4>
       <a href="#" onclick="showPage('home')">Accueil</a>
@@ -714,6 +288,7 @@
       <a href="#" onclick="showPage('galerie')">Galerie</a>
       <a href="#" onclick="showPage('contact')">Contact</a>
     </div>
+
     <div class="footer-col">
       <h4>Collections</h4>
       <a href="#">Mobilier Ancien</a>
@@ -724,6 +299,7 @@
       <a href="#">Textiles & Tapis</a>
       <a href="#">Bronzes & Cuivres</a>
     </div>
+
     <div class="footer-col">
       <h4>Livraison</h4>
       <a href="#">Casablanca & Rabat</a>
@@ -733,11 +309,11 @@
       <a href="#">Toutes les villes</a>
     </div>
   </div>
+
   <div class="footer-bottom">
-    ©️ 2026 Antiqua — Trésors · Guéliz, Marrakech, Maroc. Tous droits réservés. | Livraison partout au Maroc
+    2026 Antiqua Trésors · Guéliz, Marrakech, Maroc. Tous droits réservés. Livraison dans tout le Maroc.
   </div>
 </footer>
-
 
 <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
   <div class="lightbox-inner">
@@ -747,541 +323,8 @@
   </div>
 </div>
 
+<div class="toast" id="toast">Ajout au panier !</div>
 
-<div class="toast" id="toast">✓ Ajouté au panier !</div>
-
-<script>
-  function showPage(id) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById('page-' + id).classList.add('active');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    document.getElementById('navLinks').classList.remove('open');
-  }
-
-  function toggleMenu() {
-    document.getElementById('navLinks').classList.toggle('open');
-  }
-
-  let slideIndex = 0;
-  const slides = document.querySelectorAll('.testimonial');
-  function goSlide(n) {
-    slideIndex = (n + slides.length) % slides.length;
-    document.getElementById('testimonialsTrack').style.transform = `translateX(-${slideIndex * 100}%)`;
-  }
-  function nextSlide() { goSlide(slideIndex + 1); }
-  function prevSlide() { goSlide(slideIndex - 1); }
-  setInterval(nextSlide, 6000);
-
-  const products = [
-  
-    {
-      id: 1,
-      name: 'Commode Zellige Sculptée',
-      era: 'XIXe siècle',
-      category: 'mobilier',
-      price: '18 500 MAD',
-      origin: 'Fès, Maroc',
-      desc: 'Bois de cèdre sculpté à la main, incrustations de zellige bleu de Fès. Tiroirs d\'origine, ferrures en laiton. Pièce unique certifiée.',
-      badge: 'Rare',
-      img: 'https://i.etsystatic.com/32696640/r/il/83043e/6122564868/il_340x270.6122564868_r41z.jpg'
-    },
-    {
-      id: 2,
-      name: 'Banquette Moucharabieh',
-      era: 'Début XXe s.',
-      category: 'mobilier',
-      price: '9 800 MAD',
-      origin: 'Meknès, Maroc',
-      desc: 'Structure bois de thuya, lattes tressées, coussin cuir tannée végétal. Travail artisanal de Meknès. Parfait état de conservation.',
-      badge: '',
-      img: 'https://image.invaluable.com/housePhotos/Tajan/74/629174/H0965-L156292127_original.jpg'
-    },
-    {
-      id: 3,
-      name: "Armoire Berbère de l'Atlas",
-      era: 'XVIIIe siècle',
-      category: 'mobilier',
-      price: '24 000 MAD',
-      origin: 'Haut-Atlas, Maroc',
-      desc: 'Peuplier massif, peintures tribales originales aux pigments naturels ocre et indigo. Serrure en fer forgé d\'époque. Authentique.',
-      badge: 'Exclusif',
-      img: 'https://a.1stdibscdn.com/moroccan-hand-crafted-painted-and-carved-berber-style-wardrobe-for-sale/f_8880/f_409964121723134918293/f_40996412_1723134920058_bg_processed.jpg?width=768'
-    },
-    {
-      id: 4,
-      name: 'Table Basse Marqueterie Thuya',
-      era: '1930',
-      category: 'mobilier',
-      price: '6 500 MAD',
-      origin: 'Essaouira, Maroc',
-      desc: "Essence de thuya d'Essaouira, marqueterie citronnier et ébène. Plateau vitré de protection. Artisanat d'exception Art Déco.",
-      badge: '',
-      img: 'https://www.idfdesign.fr/photos/tables-classiques-de-luxe/art-222-r-petite-tables-de-luxe-sculpte-a-la-main.jpg'
-    },
-    {
-      id: 5,
-      name: 'Bureau Moucharabieh Sculpté',
-      era: '1890',
-      category: 'mobilier',
-      price: '32 000 MAD',
-      origin: 'Fès, Maroc',
-      desc: "Cèdre de l'Atlas, panneau moucharabieh percé à la main, tiroirs à poignées laiton. Plateau cuir vert. Majestueux.",
-      badge: 'Coup de cœur',
-      img: 'https://bigoffice.ma/wp-content/uploads/2025/11/table-de-reunion-design-moucharabieh-MDF-1.png'
-    },
-    {
-      id: 6,
-      name: 'Coffre de Mariée Tafilalet',
-      era: 'XIXe siècle',
-      category: 'mobilier',
-      price: '12 000 MAD',
-      origin: 'Tafilalet, Maroc',
-      desc: 'Bois peint à la main, serrure en fer forgé, motifs géométriques berbères. Doublure tissu d\'origine. Très rare hors région.',
-      badge: 'Rare',
-      img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-uZC8wQw-96pTlF75Mgu6APMUYn4VqcWhJg&s'
-    },
-    {
-      id: 7,
-      name: 'Lit à Baldaquin Andalou',
-      era: 'XVIIIe siècle',
-      category: 'mobilier',
-      price: '45 000 MAD',
-      origin: 'Tétouan, Maroc',
-      desc: 'Cèdre massif, colonnes tournées, baldaquin soie brodée fils or. Héritage andalou-marocain unique. Certificat Ministère Culture.',
-      badge: 'Exclusif',
-      img: 'https://www.univers-ciel-de-lit.com/_i/175928/10889/2452/92/lit-baldaquin-adulte-rouge-renaissance.jpeg'
-    },
-
-  
-    {
-      id: 8,
-      name: 'Vase Zellij Bleu de Fès',
-      era: 'XIXe siècle',
-      category: 'ceramique',
-      price: '4 200 MAD',
-      origin: 'Fès, Maroc',
-      desc: 'Poterie de Fès, émaux bleu cobalt et blanc laiteux, motifs géométriques entrelacés. Signé sous la base. Collection privée.',
-      badge: '',
-      img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzVrnzz8-oUWWKTBQqvnOZnDpY1msQdL3aSA&s'
-    },
-    {
-      id: 9,
-      name: 'Tajine Cérémoniel Gravé',
-      era: 'XVIIIe siècle',
-      category: 'ceramique',
-      price: '3 600 MAD',
-      origin: 'Salé, Maroc',
-      desc: 'Terre cuite rouge de Salé, gravures florales et végétales au tour. Couvercle en dôme original. Usage strictement décoratif.',
-      badge: 'Rare',
-      img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOkE7jpNR8ccZ2X94tXDxPMbZ90EHq9c3RaQ&s'
-    },
-    {
-      id: 10,
-      name: 'Fontaine Zellige Miniature',
-      era: '1900',
-      category: 'ceramique',
-      price: '7 500 MAD',
-      origin: 'Fès, Maroc',
-      desc: 'Fontaine de table en zellige multicolore sur structure cuivre argenté. Pompe mécanique d\'époque. Pièce exceptionnelle et unique.',
-      badge: 'Exclusif',
-      img: 'https://i.etsystatic.com/34444554/r/il/93ce8c/7782921703/il_fullxfull.7782921703_eecv.jpg'
-    },
-    {
-      id: 11,
-      name: 'Poterie Berbère Amazigh',
-      era: 'XIXe siècle',
-      category: 'ceramique',
-      price: '2 900 MAD',
-      origin: 'Tamegroute, Maroc',
-      desc: "Argile noire caractéristique de Tamegroute, décors géométriques berbères incisés à la main. Authenticité certifiée. Rare hors région.",
-      badge: '',
-      img: 'https://i.pinimg.com/474x/cc/5e/75/cc5e751021c8a722d4c4b615219709ae.jpg'
-    },
-    {
-      id: 12,
-      name: 'Amphore Tamegroute Noire',
-      era: '1870',
-      category: 'ceramique',
-      price: '8 400 MAD',
-      origin: 'Tamegroute, Maroc',
-      desc: "Argile noire caractéristique de Tamegroute, grande taille (68 cm), décors incisés profonds. Col à rebord. Pièce muséale.",
-      badge: 'Coup de cœur',
-      img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRD9lySqyWZh5ePoN3kmFbtIXOC9kbfPSY-qA&s'
-    },
-    {
-      id: 13,
-      name: 'Service à Thé Fassi Complet',
-      era: '1915',
-      category: 'ceramique',
-      price: '6 800 MAD',
-      origin: 'Fès, Maroc',
-      desc: 'Service 12 pièces en faïence de Fès, motifs arabesques bleu et blanc, état de collection. Théière, verres, plateau inclus.',
-      badge: '',
-      img: 'https://daradyafa.com/cdn/shop/files/SNGOLDSILVER33_1200x1200.webp?v=1713748420'
-    },
-
-    
-    {
-      id: 14,
-      name: 'Miniature Orientaliste',
-      era: '1885',
-      category: 'tableau',
-      price: '14 000 MAD',
-      origin: 'École de Paris',
-      desc: 'Gouache sur ivoire, scène de souk marocain animée. École orientaliste européenne. Cadre bois doré d\'époque. Signé et daté.',
-      badge: 'Signé',
-      img: 'https://a.1stdibscdn.com/exceptional-quality-miniature-painting-of-an-orientalist-turkish-dancer-1860-for-sale/f_73862/f_313923521668887044098/f_31392352_1668887044384_bg_processed.jpg?width=768'
-    },
-    {
-      id: 15,
-      name: 'Aquarelle Médina de Marrakech',
-      era: '1910',
-      category: 'tableau',
-      price: '8 800 MAD',
-      origin: 'Marrakech, Maroc',
-      desc: "Aquarelle sur papier Fabriano, vue sur la Koutoubia au coucher du soleil. Artiste anonyme. Très belle condition générale.",
-      badge: '',
-      img: 'https://cdng.europosters.eu/pod_public/1300/157509.jpg'
-    },
-    {
-      id: 16,
-      name: 'Calligraphie Arabe Encadrée',
-      era: 'XIXe siècle',
-      category: 'tableau',
-      price: '5 500 MAD',
-      origin: 'Fès, Maroc',
-      desc: "Encre de Chine sur papier de Samarcande, sourate coranique en coufique fleuri. Cadre bois doré d'époque. Pièce spirituelle rare.",
-      badge: 'Rare',
-      img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwvQheU5BbneHE1mdn2w-MTyreGEgKSo3Phg&s'
-    },
-    {
-      id: 17,
-      name: 'Huile sur Toile Souk de Fès',
-      era: '1895',
-      category: 'tableau',
-      price: '22 000 MAD',
-      origin: 'Fès, Maroc',
-      desc: "Huile sur toile marouflée, scène animée du souk El Attarine de Fès. Provenance collection d'État. Certificat d'authenticité.",
-      badge: 'Exclusif',
-      img: 'https://imgprivate2.artprice.com/get/classifieds/ebd0/53d1/4d55/15d5/d669/767f/4cad/6dc8/e161/01b7/1024/1024/Maurice-GUIRAUD-RIVIERE-Scene-de-souk-a-Fes-au-Mar-1699460282.jpg'
-    },
-    {
-      id: 18,
-      name: 'Portrait Femme Amazigh',
-      era: '1900',
-      category: 'tableau',
-      price: '16 500 MAD',
-      origin: 'Haut-Atlas, Maroc',
-      desc: "Pastel sur papier, portrait d'une femme berbère en parure traditionnelle complète. Signé J. Renard. Cadre acajou doré.",
-      badge: 'Coup de cœur',
-      img: 'https://urbanart.ma/8266-large_default/tableau-decoratif-femme-berbere.jpg'
-    },
-
-  
-    {
-      id: 19,
-      name: 'Collier Amazigh Argent',
-      era: 'XIXe siècle',
-      category: 'bijou',
-      price: '5 800 MAD',
-      origin: 'Atlas Central, Maroc',
-      desc: 'Argent massif niellé, pendeloques corail rouge et ambre naturel. Bijou de fiançailles traditionnel. Fermoir crochet d\'origine.',
-      badge: 'Coup de cœur',
-      img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSW-ncuPWm9Gi8b7CzdwrF9NpjqEnt3pbplyQ&s'
-    },
-    {
-      id: 20,
-      name: 'Fibule Double Tisfri',
-      era: 'XVIIIe siècle',
-      category: 'bijou',
-      price: '9 500 MAD',
-      origin: 'Souss, Maroc',
-      desc: 'Argent, corail, émail cloisonné. Paire complète avec chaîne de liaison d\'origine. Très rare en parfait état de conservation.',
-      badge: 'Rare',
-      img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/MAP_Paris_Fibules_04032012_1.jpg/250px-MAP_Paris_Fibules_04032012_1.jpg'
-    },
-    {
-      id: 21,
-      name: 'Bague Chevalière Fès',
-      era: '1870',
-      category: 'bijou',
-      price: '13 500 MAD',
-      origin: 'Souss-Massa, Maroc',
-      desc: 'Argent doré, pierres de corail et turquoise, pendeloques mobiles. Bijou de mariée du Souss. Pièce unique certifiée.',
-      badge: 'Exclusif',
-      img: 'https://graazie.com/wp-content/uploads/2025/01/Chevaliere-Rimbaud-ovale-en-argent-gravee-1U7A6658.jpg'
-    },
-    {
-      id: 22,
-      name: 'Ceinture Argent Repoussé',
-      era: 'XIXe siècle',
-      category: 'bijou',
-      price: '7 800 MAD',
-      origin: 'Marrakech, Maroc',
-      desc: 'Argent massif repoussé, plaques articulées, motifs floraux et géométriques. Ceinture de cérémonie. Fermoir en argent massif.',
-      badge: 'Rare',
-      img: 'https://i.etsystatic.com/7460334/r/il/44745d/3677957320/il_570xN.3677957320_8ex9.jpg'
-    },
-    {
-      id: 23,
-      name: 'Bracelet Manchette Tislit',
-      era: 'XVIIIe siècle',
-      category: 'bijou',
-      price: '6 200 MAD',
-      origin: 'Tiznit, Maroc',
-      desc: 'Argent massif gravé, ouverture à charnière, motifs amazighs géométriques. Format manchette rare. Provenance collection privée.',
-      badge: 'Coup de cœur',
-      img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmi8wAbwFavKEQXW75Z0gVD_pTS6FFAtKodw&s'
-    },
-
-    
-    {
-      id: 24,
-      name: 'Horloge de Mosquée Ottomane',
-      era: 'XIXe siècle',
-      category: 'horloge',
-      price: '28 000 MAD',
-      origin: 'Istanbul / Maroc',
-      desc: 'Boîtier laiton doré, cadran arabe et latin, mécanisme Westminster. Provenance mosquée historique. Pièce rarissime en état de marche.',
-      badge: 'Exclusif',
-      img: 'https://medias.gazette-drouot.com/prod/medias/mediatheque/88945.jpg'
-    },
-    {
-      id: 25,
-      name: 'Montre de Gousset Gravée',
-      era: '1895',
-      category: 'horloge',
-      price: '7 200 MAD',
-      origin: 'Suisse / Maroc',
-      desc: 'Boîtier argent niellé à décor arabesque, mouvement suisse 17 rubis. Parfaite marche assurée. Chaîne Albert d\'origine incluse.',
-      badge: 'Signé',
-      img: 'https://votre-horloge-murale.com/cdn/shop/files/montre-a-gousset-personnalise-2.jpg?v=1730882207'
-    },
-    {
-      id: 26,
-      name: 'Pendule de Table Moorish',
-      era: '1910',
-      category: 'horloge',
-      price: '11 500 MAD',
-      origin: 'France / Maroc',
-      desc: "Boîtier bronze doré à décor mauresque, carillon sonnant les quarts d'heure, socle marbre noir. Entretien récent.",
-      badge: '',
-      img: 'https://www.1001pendules.fr/pendules_images/produits/2195-1-1-_prd.jpg'
-    },
-    {
-      id: 27,
-      name: 'Montre de Poche Sultan',
-      era: '1870',
-      category: 'horloge',
-      price: '15 000 MAD',
-      origin: 'Genève / Palais Royal',
-      desc: 'Savonnette or 18 carats, cadran chiffres arabes dorés, mouvement Patek vintage. Provenance palais. Exceptionnel état.',
-      badge: 'Exclusif',
-      img: 'https://ma.jumia.is/unsafe/fit-in/680x680/filters:fill(white)/product/43/256966/1.jpg?0905'
-    },
-
-   
-    {
-      id: 28,
-      name: 'Tapis Berbère Moyen Atlas',
-      era: 'XIXe siècle',
-      category: 'textile',
-      price: '22 000 MAD',
-      origin: 'Moyen Atlas, Maroc',
-      desc: 'Laine nouée à la main, motifs losanges et croix amazighes, rouge et ivoire sur fond naturel. Authenticité certifiée par expert.',
-      badge: 'Rare',
-      img: 'https://cinumedpub.mmsh.fr/prosper-ricard_tapis/Planche-13.jpg'
-    },
-    {
-      id: 29,
-      name: 'Caftan de Cour Brodé',
-      era: '1880',
-      category: 'textile',
-      price: '18 500 MAD',
-      origin: 'Fès, Maroc',
-      desc: 'Velours grenat, broderies sfifa et maâlem dorées au fil passé, boutons dorés anciens. Habit de cérémonie de cour fassi.',
-      badge: 'Exclusif',
-      img: 'https://www.shutterstock.com/image-photo/elegant-moroccan-caftan-traditional-embroidery-600nw-2635542823.jpg'
-    },
-    {
-      id: 30,
-      name: 'Klim Haouz Antique',
-      era: 'XVIIIe siècle',
-      category: 'textile',
-      price: '35 000 MAD',
-      origin: 'Haouz, Maroc',
-      desc: 'Tapisserie plate laine et soie, motifs abstraits Haouz, colorants végétaux d\'origine. Conservation remarquable. Qualité muséale.',
-      badge: 'Coup de cœur',
-      img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiJe4duutXfvIhS2t10aKaAoby6NMgH50ZYg&s'
-    },
-    {
-      id: 31,
-      name: 'Ceinture Handira de Mariage',
-      era: 'XIXe siècle',
-      category: 'textile',
-      price: '6 800 MAD',
-      origin: 'Moyen Atlas, Maroc',
-      desc: 'Laine tissée main avec paillettes argent intégrées, handira de mariée berbère. Rarissime en état complet. Provenance familiale.',
-      badge: 'Rare',
-      img: 'https://www.casablancax.com/wp-content/uploads/2025/05/C254D2B8-EDA4-4041-A161-D8007EC51A1A.jpeg'
-    },
-
-  
-    {
-      id: 32,
-      name: 'Plateau Cuivre Gravé Tawriq',
-      era: 'XIXe siècle',
-      category: 'bronze',
-      price: '5 200 MAD',
-      origin: 'Meknès, Maroc',
-      desc: 'Cuivre battu et gravé, motifs arabesques et calligraphie, 80 cm de diamètre. Pied en bois sculpté inclus. Somptueux travail.',
-      badge: '',
-      img: 'https://m.media-amazon.com/images/I/81XZUUB40KS._AC_UF1000,1000_QL80_.jpg'
-    },
-    {
-      id: 33,
-      name: 'Mortier Bronze Apothicaire',
-      era: 'XVIIIe siècle',
-      category: 'bronze',
-      price: '7 500 MAD',
-      origin: 'Fès, Maroc',
-      desc: 'Bronze à patine ancienne vert-de-gris, gravures latines et arabes, pilon assorti. Provenance officine médicale historique. Rare.',
-      badge: 'Rare',
-      img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-i6dTpUL6kaayDboz_fZooKMoSwFaltmeGQ&s'
-    },
-    {
-      id: 34,
-      name: 'Encensoir Mosquée Argent Bronze',
-      era: '1860',
-      category: 'bronze',
-      price: '12 000 MAD',
-      origin: 'Marrakech, Maroc',
-      desc: "Encensoir cérémoniel, alliage argent-bronze, chaînes originales à 3 brins, décor arabesque d'époque. Usage religieux authentique.",
-      badge: 'Exclusif',
-      img: 'https://fesstore.ma/wp-content/uploads/2025/08/WhatsApp-Image-2025-08-06-a-21.37.35_9fef9528.jpg'
-    },
-
-   
-    {
-      id: 35,
-      name: 'Koummya Argent Gravée',
-      era: 'XIXe siècle',
-      category: 'arme',
-      price: '8 900 MAD',
-      origin: 'Maroc',
-      desc: 'Poignard cérémoniel courbé, manche argent massif niellé, fourreau cuir et argent ciselé. Lame inactivée. Usage strictement décoratif.',
-      badge: 'Coup de cœur',
-      img: 'https://www.proantic.com/galerie/coridon/img/1704963-698b738c55fcc.jpg'
-    },
-    {
-      id: 36,
-      name: 'Sabre de Cérémonie Sultanien',
-      era: 'XVIIIe siècle',
-      category: 'arme',
-      price: '24 000 MAD',
-      origin: 'Palais Royal, Maroc',
-      desc: "Lame acier damas à motifs ondés, garde dorée filigranée, fourreau velours rouge et or. Héritage palatial. Usage décoratif exclusif.",
-      badge: 'Exclusif',
-      img: 'https://balp-france.fr/img/p/8/6/6/866.jpg'
-    },
-  ];
-
-  function renderProducts(category) {
-    const grid = document.getElementById('productsGrid');
-    const filtered = category === 'all' ? products : products.filter(p => p.category === category);
-    grid.innerHTML = filtered.map(p => `
-      <div class="product-card" data-id="${p.id}">
-        <div class="product-img img-loading">
-          <img
-            src="${p.img}"
-            alt="${p.name}"
-            loading="lazy"
-            onload="this.parentElement.classList.remove('img-loading')"
-            onerror="this.style.display='none'; this.parentElement.classList.remove('img-loading'); this.parentElement.innerHTML += '<div class=\\'product-img-fallback\\'>🏺</div>${p.badge ? '<span class="product-badge">' + p.badge + '</span>' : ''}';"
-          />
-          ${p.badge ? `<span class="product-badge">${p.badge}</span>` : ''}
-        </div>
-        <div class="product-info">
-          <div class="product-era">${p.era}</div>
-          <div class="product-name">${p.name}</div>
-          <div class="product-origin">📍 ${p.origin}</div>
-          <div class="product-desc">${p.desc}</div>
-          <div class="product-footer">
-            <div class="product-price">${p.price}</div>
-            <button class="add-cart-btn" onclick="addToCart('${p.name}')">+ Panier</button>
-          </div>
-        </div>
-      </div>
-    `).join('');
-  }
-  renderProducts('all');
-
-  function filterProducts(cat, btn) {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderProducts(cat);
-  }
-
-  function addToCart(name) {
-    const t = document.getElementById('toast');
-    t.textContent = `✓ "${name}" ajouté au panier !`;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3000);
-  }
-
-  const galleryItems = [
-    { img: 'https://i.etsystatic.com/32696640/r/il/83043e/6122564868/il_340x270.6122564868_r41z.jpg', title: 'Commode Zellige Sculptée', desc: 'Bois de cèdre, incrustations zellige, XIXe siècle, Fès' },
-    { img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSW-ncuPWm9Gi8b7CzdwrF9NpjqEnt3pbplyQ&s', title: 'Collier Amazigh Argent', desc: 'Argent niellé et corail rouge, Atlas Central, XIXe s.' },
-    { img: 'https://medias.gazette-drouot.com/prod/medias/mediatheque/88945.jpg', title: 'Horloge de Mosquée Ottomane', desc: 'Laiton doré, cadran arabe, mécanisme Westminster, XIXe s.' },
-    { img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzVrnzz8-oUWWKTBQqvnOZnDpY1msQdL3aSA&s', title: 'Vase Zellij Bleu de Fès', desc: 'Poterie émaillée XIXe siècle, manufacture de Fès' },
-    { img: 'https://a.1stdibscdn.com/exceptional-quality-miniature-painting-of-an-orientalist-turkish-dancer-1860-for-sale/f_73862/f_313923521668887044098/f_31392352_1668887044384_bg_processed.jpg?width=768', title: 'Miniature Orientaliste', desc: 'Gouache sur ivoire, scène de souk, École Paris, 1885' },
-    { img: 'https://cinumedpub.mmsh.fr/prosper-ricard_tapis/Planche-13.jpg', title: 'Tapis Berbère Moyen Atlas', desc: 'Laine nouée, motifs amazighs, rouge et ivoire, XIXe s.' },
-    { img: 'https://www.idfdesign.fr/photos/tables-classiques-de-luxe/art-222-r-petite-tables-de-luxe-sculpte-a-la-main.jpg', title: 'Table Marqueterie Thuya', desc: "Bois de thuya d'Essaouira, citronnier et ébène, 1930" },
-    { img: 'https://www.shutterstock.com/image-photo/elegant-moroccan-caftan-traditional-embroidery-600nw-2635542823.jpg', title: 'Caftan de Cour Brodé', desc: 'Velours grenat, broderies dorées sfifa, Fès, 1880' },
-    { img: 'https://ma.jumia.is/unsafe/fit-in/680x680/filters:fill(white)/product/43/256966/1.jpg?0905', title: 'Montre de Gousset Gravée', desc: 'Argent niellé arabesque, mouvement suisse 17 rubis, 1895' },
-    { img: 'https://imgprivate2.artprice.com/get/classifieds/ebd0/53d1/4d55/15d5/d669/767f/4cad/6dc8/e161/01b7/1024/1024/Maurice-GUIRAUD-RIVIERE-Scene-de-souk-a-Fes-au-Mar-1699460282.jpg', title: 'Huile sur Toile Souk de Fès', desc: 'Scène animée souk El Attarine, collection État, 1895' },
-    { img: 'https://a.1stdibscdn.com/moroccan-hand-crafted-painted-and-carved-berber-style-wardrobe-for-sale/f_8880/f_409964121723134918293/f_40996412_1723134920058_bg_processed.jpg?width=768', title: "Armoire Berbère de l'Atlas", desc: "Peuplier massif, peintures tribales, pigments naturels, XVIIIe s." },
-  ];
-
-  function renderGallery() {
-    const grid = document.getElementById('galleryGrid');
-    grid.innerHTML = galleryItems.map((item, i) => `
-      <div class="gallery-item" onclick="openLightbox(${i})">
-        <img src="${item.img}" alt="${item.title}" loading="lazy" />
-        <div class="gallery-overlay">
-          <h3>${item.title}</h3>
-          <p>${item.desc}</p>
-        </div>
-      </div>
-    `).join('');
-  }
-  renderGallery();
-
-  function openLightbox(i) {
-    const item = galleryItems[i];
-    document.getElementById('lightboxImg').innerHTML = `<img src="${item.img}" alt="${item.title}" style="width:100%;height:100%;object-fit:cover;" />`;
-    document.getElementById('lightboxCaption').textContent = item.title + ' — ' + item.desc;
-    document.getElementById('lightbox').classList.add('open');
-  }
-  function closeLightbox(e) {
-    if (!e || e.target === document.getElementById('lightbox') || e.target.classList.contains('lightbox-close')) {
-      document.getElementById('lightbox').classList.remove('open');
-    }
-  }
-
-  function submitForm() {
-    const prenom = document.getElementById('fPrenom').value.trim();
-    const email  = document.getElementById('fEmail').value.trim();
-    const sujet  = document.getElementById('fSujet').value;
-    const msg    = document.getElementById('fMessage').value.trim();
-    if (!prenom || !email || !sujet || !msg) {
-      alert('Veuillez remplir tous les champs obligatoires.');
-      return;
-    }
-    document.getElementById('formMsg').classList.add('show');
-    ['fPrenom','fNom','fEmail','fMessage'].forEach(id => document.getElementById(id).value = '');
-    document.getElementById('fSujet').selectedIndex = 0;
-  }
-</script>
+<script src="script.js"></script>
 </body>
 </html>
