@@ -19,9 +19,8 @@ function showPage(id) {
   function prevSlide() { goSlide(slideIndex - 1); }
   setInterval(nextSlide, 6000);
 
- //eeach product has an uniqe usplash image 
   const products = [
-    // MOBILIER (unique items only)
+    
     {
       id: 1,
       name: 'Commode Zellige Sculptée',
@@ -100,7 +99,7 @@ function showPage(id) {
       img: 'https://www.univers-ciel-de-lit.com/_i/175928/10889/2452/92/lit-baldaquin-adulte-rouge-renaissance.jpeg'
     },
 
-    // ce
+    
     {
       id: 8,
       name: 'Vase Zellij Bleu de Fès',
@@ -168,7 +167,6 @@ function showPage(id) {
       img: 'https://daradyafa.com/cdn/shop/files/SNGOLDSILVER33_1200x1200.webp?v=1713748420'
     },
 
-    // TABLEAUX (unique items)
     {
       id: 14,
       name: 'Miniature Orientaliste',
@@ -225,7 +223,7 @@ function showPage(id) {
       img: 'https://urbanart.ma/8266-large_default/tableau-decoratif-femme-berbere.jpg'
     },
 
-    // BIJOUX (unique items)
+   
     {
       id: 19,
       name: 'Collier Amazigh Argent',
@@ -282,7 +280,6 @@ function showPage(id) {
       img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmi8wAbwFavKEQXW75Z0gVD_pTS6FFAtKodw&s'
     },
 
-    // HORLOGERIE (unique items)
     {
       id: 24,
       name: 'Horloge de Mosquée Ottomane',
@@ -328,7 +325,7 @@ function showPage(id) {
       img: 'https://ma.jumia.is/unsafe/fit-in/680x680/filters:fill(white)/product/43/256966/1.jpg?0905'
     },
 
-    // TEXTILES (unique items)
+
     {
       id: 28,
       name: 'Tapis Berbère Moyen Atlas',
@@ -374,7 +371,7 @@ function showPage(id) {
       img: 'https://www.casablancax.com/wp-content/uploads/2025/05/C254D2B8-EDA4-4041-A161-D8007EC51A1A.jpeg'
     },
 
-    // BRONZES & CUIVRES (unique items)
+   
     {
       id: 32,
       name: 'Plateau Cuivre Gravé Tawriq',
@@ -409,7 +406,6 @@ function showPage(id) {
       img: 'https://fesstore.ma/wp-content/uploads/2025/08/WhatsApp-Image-2025-08-06-a-21.37.35_9fef9528.jpg'
     },
 
-    // ARMES DÉCORATIVES (unique items)
     {
       id: 35,
       name: 'Koummya Argent Gravée',
@@ -477,7 +473,7 @@ function showPage(id) {
     setTimeout(() => t.classList.remove('show'), 3000);
   }
 
-  // Gallery uses same products as a curated selection
+
   const galleryItems = [
     { img: 'https://i.etsystatic.com/32696640/r/il/83043e/6122564868/il_340x270.6122564868_r41z.jpg', title: 'Commode Zellige Sculptée', desc: 'Bois de cèdre, incrustations zellige, XIXe siècle, Fès' },
     { img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSW-ncuPWm9Gi8b7CzdwrF9NpjqEnt3pbplyQ&s', title: 'Collier Amazigh Argent', desc: 'Argent niellé et corail rouge, Atlas Central, XIXe s.' },
